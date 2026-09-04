@@ -36,9 +36,11 @@ export function SiteFooter({
           <p className="max-w-xs text-sm text-white/80">
             Σύγχρονο nail & beauty studio στους Αγίους Αναργύρους.
           </p>
-          <ButtonLink href={settings.treatwellUrl} external size="sm">
-            Κλείσε Ραντεβού
-          </ButtonLink>
+          <span data-booking-cta>
+            <ButtonLink href={settings.treatwellUrl} external size="sm">
+              Κλείσε Ραντεβού
+            </ButtonLink>
+          </span>
         </div>
 
         <div>
@@ -50,6 +52,7 @@ export function SiteFooter({
               ["/", "Αρχική"],
               ["/services", "Υπηρεσίες"],
               ["/gallery", "Gallery"],
+              ["/lookbook", "Lookbook"],
               ["/about", "Σχετικά"],
               ["/contact", "Επικοινωνία"],
             ].map(([href, label]) => (

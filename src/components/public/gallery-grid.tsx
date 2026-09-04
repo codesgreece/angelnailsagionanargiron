@@ -45,9 +45,10 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
           {filtered.map((img, i) => (
             <FadeIn key={img.id} delay={Math.min(i * 0.03, 0.18)} className="mb-4 break-inside-avoid">
               <button
+                id={img.id}
                 type="button"
                 onClick={() => setActive(img)}
-                className="group relative block w-full overflow-hidden bg-[var(--brand-soft-white)]"
+                className="group relative block w-full scroll-mt-28 overflow-hidden bg-[var(--brand-soft-white)]"
               >
                 <Image
                   src={img.imageUrl}

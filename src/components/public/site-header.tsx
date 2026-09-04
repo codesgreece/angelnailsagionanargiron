@@ -13,6 +13,7 @@ const NAV = [
   { href: "/", label: "Αρχική" },
   { href: "/services", label: "Υπηρεσίες" },
   { href: "/gallery", label: "Gallery" },
+  { href: "/lookbook", label: "Lookbook" },
   { href: "/about", label: "Σχετικά" },
   { href: "/contact", label: "Επικοινωνία" },
 ];

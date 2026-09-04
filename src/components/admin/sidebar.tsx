@@ -47,6 +47,7 @@ const NAV = [
     children: [
       { href: "/admin/gallery", label: "All Images" },
       { href: "/admin/gallery/upload", label: "Upload" },
+      { href: "/admin/lookbook", label: "Lookbook" },
     ],
   },
   { href: "/admin/team", label: "Team", icon: Users },

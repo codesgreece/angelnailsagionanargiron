@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/public/site-header";
 import { SiteFooter } from "@/components/public/site-footer";
 import { CookieBanner } from "@/components/public/cookie-banner";
 import { ViewTracker } from "@/components/public/view-tracker";
-import { MobileBookingBar } from "@/components/public/mobile-booking-bar";
+import { StickyBookingBar } from "@/components/public/sticky-booking-bar";
 import {
   getOpeningHours,
   getSiteSettings,
@@ -30,7 +30,7 @@ export default async function PublicLayout({ children }: { children: React.React
   };
 
   return (
-    <div style={cssVars} className="pb-20 md:pb-0">
+    <div style={cssVars} className="pb-16 md:pb-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd(settings)) }}
@@ -39,7 +39,11 @@ export default async function PublicLayout({ children }: { children: React.React
       <SiteHeader treatwellUrl={settings.treatwellUrl} />
       <main>{children}</main>
       <SiteFooter settings={settings} hours={hours} socials={socials} />
-      <MobileBookingBar treatwellUrl={settings.treatwellUrl} />
+      <StickyBookingBar
+        treatwellUrl={settings.treatwellUrl}
+        brandName={settings.brandName}
+        address={`${settings.addressLine1} · ${settings.city}`}
+      />
       <CookieBanner enabled={settings.cookieBannerEnabled} />
     </div>
   );

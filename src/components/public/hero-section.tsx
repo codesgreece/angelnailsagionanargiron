@@ -83,9 +83,11 @@ export function HeroSection({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.55 }}
           >
-            <ButtonLink href={treatwellUrl} external size="lg" className="w-full sm:w-auto">
-              Κλείσε Ραντεβού
-            </ButtonLink>
+            <span data-booking-cta className="w-full sm:w-auto">
+              <ButtonLink href={treatwellUrl} external size="lg" className="w-full sm:w-auto">
+                Κλείσε Ραντεβού
+              </ButtonLink>
+            </span>
             <ButtonLink
               href="/services"
               variant="outlineLight"

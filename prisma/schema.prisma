@@ -133,11 +133,32 @@ model GalleryImage {
   featured     Boolean  @default(false)
   active       Boolean  @default(true)
   displayOrder Int      @default(0)
+  lookbookEnabled     Boolean  @default(false)
+  lookbookOrder       Int      @default(0)
+  lookbookTitle       String?
+  lookbookDescription String?
+  lookbookCategory    String?
+  lookbookFeatured    Boolean  @default(false)
+  serviceId           String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   @@index([active, featured])
   @@index([category])
+  @@index([lookbookEnabled, lookbookOrder])
+}
+
+model LookbookSettings {
+  id              String  @id @default("default")
+  title           String  @default("THE ANGEL NAILS BOOK")
+  subtitle        String  @default("NAIL LOOKS • DETAILS • INSPIRATION")
+  coverImageUrl   String?
+  coverLogoUrl    String?
+  coverBackground String  @default("#09090B")
+  accentColor     String  @default("#ED2F78")
+  homepageEnabled Boolean @default(true)
+  homepageBlurb   String  @default("Μια ματιά στα looks που δημιουργούμε.")
+  updatedAt       DateTime @updatedAt
 }
 
 model TeamMember {
