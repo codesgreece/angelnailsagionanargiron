@@ -172,7 +172,6 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
 
   const leftPage = pages[index] || null;
   const rightPage = pages[index + 1] || null;
-  const nextUnder = pages[index + 2] || null;
   const singlePage = pages[index] || null;
   const activeCaption = leftPage || singlePage;
 
