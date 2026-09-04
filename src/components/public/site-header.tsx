@@ -7,7 +7,6 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { BrandLogo } from "@/components/public/brand-logo";
-import { ButtonLink } from "@/components/ui/button-link";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -57,54 +56,68 @@ export function SiteHeader({ treatwellUrl }: { treatwellUrl: string }) {
         {open && (
           <motion.div
             className="fixed inset-0 z-[100] flex flex-col bg-[#09090B] lg:hidden"
+            style={{ color: "#FFFFFF" }}
             initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.22 }}
           >
-            <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
               <Link href="/" aria-label="Angel Nails αρχική" onClick={() => setOpen(false)}>
                 <BrandLogo size="sm" />
               </Link>
               <button
                 type="button"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-md text-white"
+                className="inline-flex h-10 w-10 items-center justify-center text-[#FFFFFF]"
                 aria-label="Κλείσιμο μενού"
                 onClick={() => setOpen(false)}
               >
-                <X size={24} />
+                <X size={22} />
               </button>
             </div>
 
-            <nav className="flex flex-1 flex-col gap-2 overflow-y-auto px-4 pb-6 pt-4" aria-label="Mobile">
-              {NAV.map((item, i) => (
-                <motion.div
-                  key={item.href}
-                  initial={reduce ? false : { opacity: 0, x: -18 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.04 * i, duration: 0.28 }}
-                >
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "block rounded-lg px-4 py-4 text-xl font-semibold text-white",
-                      pathname === item.href ? "bg-[#ED2F78]" : "bg-white/5 hover:bg-white/10",
-                    )}
-                    onClick={() => setOpen(false)}
+            <nav className="flex flex-1 flex-col px-5 pt-8" aria-label="Mobile" style={{ color: "#FFFFFF" }}>
+              {NAV.map((item, i) => {
+                const active = pathname === item.href;
+                return (
+                  <motion.div
+                    key={item.href}
+                    initial={reduce ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 * i, duration: 0.28 }}
                   >
-                    {item.label}
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "flex items-center justify-between border-b border-white/10 py-4 text-[1.05rem] tracking-wide",
+                        active ? "font-semibold" : "font-normal",
+                      )}
+                      style={{ color: active ? "#FF3F87" : "#FFFFFF" }}
+                    >
+                      <span>{item.label}</span>
+                      {active && <span className="h-1.5 w-1.5 rounded-full bg-[#FF3F87]" />}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+
               <motion.div
-                className="mt-auto pt-8"
+                className="mt-auto pb-8 pt-10"
                 initial={reduce ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.24 }}
+                transition={{ delay: 0.28 }}
               >
-                <ButtonLink href={treatwellUrl} external className="w-full" size="lg">
+                <a
+                  href={treatwellUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex min-h-12 w-full items-center justify-center rounded-md bg-[#ED2F78] px-5 text-base font-semibold"
+                  style={{ color: "#FFFFFF" }}
+                  onClick={() => setOpen(false)}
+                >
                   Κλείσε Ραντεβού
-                </ButtonLink>
+                </a>
               </motion.div>
             </nav>
           </motion.div>
@@ -131,10 +144,8 @@ export function SiteHeader({ treatwellUrl }: { treatwellUrl: string }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  "text-sm font-medium tracking-wide text-white transition hover:text-[#FF3F87]",
-                  pathname === item.href && "text-[#FF3F87]",
-                )}
+                className="text-sm font-medium tracking-wide transition hover:opacity-80"
+                style={{ color: pathname === item.href ? "#FF3F87" : "#FFFFFF" }}
               >
                 {item.label}
               </Link>
@@ -142,12 +153,19 @@ export function SiteHeader({ treatwellUrl }: { treatwellUrl: string }) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <ButtonLink href={treatwellUrl} external size="sm" className="hidden sm:inline-flex">
+            <a
+              href={treatwellUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden min-h-10 items-center justify-center rounded-md bg-[#ED2F78] px-4 text-sm font-medium sm:inline-flex"
+              style={{ color: "#FFFFFF" }}
+            >
               Κλείσε Ραντεβού
-            </ButtonLink>
+            </a>
             <button
               type="button"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-md text-white lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-md lg:hidden"
+              style={{ color: "#FFFFFF" }}
               aria-label={open ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}

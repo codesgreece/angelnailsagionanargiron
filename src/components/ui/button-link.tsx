@@ -27,26 +27,35 @@ export function ButtonLink({
   };
   const variants = {
     primary:
-      "bg-[#ED2F78] text-white hover:bg-[#FF3F87] shadow-[0_10px_28px_rgba(237,47,120,0.28)]",
-    secondary: "bg-[#09090B] text-white hover:bg-[#17171A]",
-    ghost: "bg-transparent text-current hover:bg-black/5",
-    outline: "border border-[#09090B]/25 bg-transparent text-[#09090B] hover:border-[#ED2F78] hover:text-[#ED2F78]",
+      "bg-[#ED2F78] hover:bg-[#FF3F87] shadow-[0_10px_28px_rgba(237,47,120,0.28)]",
+    secondary: "bg-[#09090B] hover:bg-[#17171A]",
+    ghost: "bg-transparent hover:bg-black/5",
+    outline: "border border-[#09090B]/25 bg-transparent hover:border-[#ED2F78]",
     outlineLight:
-      "border border-white/55 bg-white/10 text-white backdrop-blur-sm hover:bg-white hover:text-[#09090B]",
+      "border border-[#FFFFFF]/55 bg-[#FFFFFF]/10 backdrop-blur-sm hover:bg-[#FFFFFF]",
   };
+
+  const colorStyle =
+    variant === "outline"
+      ? { color: "#09090B" }
+      : variant === "ghost"
+        ? undefined
+        : variant === "outlineLight"
+          ? { color: "#FFFFFF" }
+          : { color: "#FFFFFF" };
 
   const cls = cn(base, sizes[size], variants[variant], className);
 
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={cls}>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={cls} style={colorStyle}>
         {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={cls}>
+    <Link href={href} className={cls} style={colorStyle}>
       {children}
     </Link>
   );
