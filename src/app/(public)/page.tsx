@@ -48,27 +48,28 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection
-        title={hero?.title || "ANGEL NAILS"}
+        title={hero?.title || "Angel Nails"}
         subtitle={hero?.subtitle || "Η περιποίηση των άκρων, στη δική μας αισθητική."}
-        body={hero?.body}
+        body={hero?.body || "Μανικιούρ • Πεντικιούρ • Τεχνητά Νύχια • Nail Care"}
         imageUrl={hero?.imageUrl || settings.heroImageUrl || "/images/store/venue-1.png"}
         treatwellUrl={settings.treatwellUrl}
       />
 
-      <section className="bg-[var(--brand-soft-white)] py-20 md:py-28">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 md:grid-cols-2 md:px-6">
+      <section className="overflow-hidden bg-[#F7F6F4] py-16 md:py-28">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 md:grid-cols-2 md:gap-12 md:px-6">
           <FadeIn>
-            <p className="text-xs uppercase tracking-[0.28em] text-[var(--brand-pink)]">Angel Nails</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#ED2F78]">Angel Nails</p>
+            <div className="mt-3 h-[2px] w-16 bg-[#ED2F78] anim-line" />
             <h2
-              className="mt-3 text-4xl leading-tight text-[var(--brand-black)] md:text-5xl"
-              style={{ fontFamily: "var(--font-cormorant), serif" }}
+              className="mt-5 text-3xl leading-tight text-[#09090B] md:text-5xl"
+              style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
             >
               {intro?.title || "Σύγχρονο nail studio στους Αγίους Αναργύρους"}
             </h2>
-            <p className="mt-5 text-base leading-relaxed text-black/65 md:text-lg">
+            <p className="mt-5 text-base leading-relaxed text-[#09090B]/75 md:text-lg">
               {intro?.body}
             </p>
-            <ul className="mt-6 grid grid-cols-2 gap-2 text-sm text-black/70">
+            <ul className="mt-6 grid grid-cols-2 gap-3 text-sm text-[#09090B]/80">
               {[
                 "Manicure",
                 "Pedicure",
@@ -78,14 +79,14 @@ export default async function HomePage() {
                 "Nail design",
                 "Thread / waxing",
               ].map((item) => (
-                <li key={item} className="border-l border-[var(--brand-pink)]/50 pl-3">
+                <li key={item} className="border-l-2 border-[#ED2F78] pl-3">
                   {item}
                 </li>
               ))}
             </ul>
           </FadeIn>
-          <FadeIn delay={0.1}>
-            <div className="relative aspect-[4/5] overflow-hidden bg-[var(--brand-warm-grey)]">
+          <FadeIn delay={0.12}>
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#D8D5D2] anim-float shadow-[0_24px_60px_rgba(9,9,11,0.12)]">
               <Image
                 src="/images/store/venue-1.png"
                 alt="Angel Nails storefront"
@@ -98,58 +99,62 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-white py-16 md:py-28">
         <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <FadeIn className="mb-10 max-w-2xl">
+          <FadeIn className="mb-8 max-w-2xl md:mb-10">
             <h2
-              className="text-4xl text-[var(--brand-black)] md:text-5xl"
-              style={{ fontFamily: "var(--font-cormorant), serif" }}
+              className="text-3xl text-[#09090B] md:text-5xl"
+              style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
             >
               {servicesBlock?.title || "Οι υπηρεσίες μας"}
             </h2>
-            <p className="mt-3 text-black/60">{servicesBlock?.subtitle}</p>
+            <p className="mt-3 text-[#09090B]/65">
+              {servicesBlock?.subtitle || "Επιλεγμένες θεραπείες για χέρια, πόδια και nail design."}
+            </p>
           </FadeIn>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((s, i) => (
               <ServiceCard key={s.id} service={s} treatwellUrl={settings.treatwellUrl} delay={i * 0.05} />
             ))}
           </div>
-          <div className="mt-10">
+          <FadeIn delay={0.1} className="mt-8 md:mt-10">
             <ButtonLink href="/services" variant="secondary">
               Όλες οι υπηρεσίες
             </ButtonLink>
-          </div>
+          </FadeIn>
         </div>
       </section>
 
       {gallery.length > 0 && (
-        <section className="bg-[var(--brand-soft-white)] py-20 md:py-28">
+        <section className="bg-[#F7F6F4] py-16 md:py-28">
           <div className="mx-auto max-w-7xl px-4 md:px-6">
-            <FadeIn className="mb-10 flex items-end justify-between gap-4">
+            <FadeIn className="mb-8 flex items-end justify-between gap-4 md:mb-10">
               <div>
                 <h2
-                  className="text-4xl md:text-5xl"
-                  style={{ fontFamily: "var(--font-cormorant), serif" }}
+                  className="text-3xl md:text-5xl"
+                  style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
                 >
                   Gallery
                 </h2>
-                <p className="mt-2 text-black/60">Στιγμές από τον χώρο του Angel Nails.</p>
+                <p className="mt-2 text-[#09090B]/65">Στιγμές από τον χώρο του Angel Nails.</p>
               </div>
               <ButtonLink href="/gallery" variant="outline" className="hidden sm:inline-flex">
                 Δες περισσότερα
               </ButtonLink>
             </FadeIn>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {gallery.slice(0, 6).map((img) => (
-                <div key={img.id} className="relative aspect-[4/5] overflow-hidden bg-black/5">
-                  <Image
-                    src={img.imageUrl}
-                    alt={img.altText || img.title || "Angel Nails"}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                </div>
+            <div className="grid grid-cols-2 gap-2 md:gap-3 lg:grid-cols-3">
+              {gallery.slice(0, 6).map((img, i) => (
+                <FadeIn key={img.id} delay={i * 0.04} className={i === 0 ? "col-span-2 lg:col-span-1" : ""}>
+                  <div className="relative aspect-[4/5] overflow-hidden bg-black/5">
+                    <Image
+                      src={img.imageUrl}
+                      alt={img.altText || img.title || "Angel Nails"}
+                      fill
+                      className="object-cover transition duration-700 hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  </div>
+                </FadeIn>
               ))}
             </div>
           </div>
@@ -157,28 +162,28 @@ export default async function HomePage() {
       )}
 
       {team.length > 0 && (
-        <section className="bg-white py-20 md:py-28">
+        <section className="bg-white py-16 md:py-28">
           <div className="mx-auto max-w-7xl px-4 md:px-6">
-            <FadeIn className="mb-10">
+            <FadeIn className="mb-8 md:mb-10">
               <h2
-                className="text-4xl md:text-5xl"
-                style={{ fontFamily: "var(--font-cormorant), serif" }}
+                className="text-3xl md:text-5xl"
+                style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
               >
                 Η ομάδα μας
               </h2>
             </FadeIn>
-            <div className="grid gap-6 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-3">
               {team.map((m, i) => (
                 <FadeIn key={m.id} delay={i * 0.06}>
-                  <article className="border border-[var(--brand-warm-grey)]/70 bg-[var(--brand-soft-white)] p-6">
-                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--brand-black)] text-xl text-[var(--brand-pink-bright)]">
+                  <article className="border border-[#D8D5D2] bg-[#F7F6F4] p-6 transition hover:-translate-y-1 hover:border-[#ED2F78]/40">
+                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#09090B] text-xl text-[#FF3F87]">
                       {m.name.charAt(0)}
                     </div>
-                    <h3 className="text-xl" style={{ fontFamily: "var(--font-cormorant), serif" }}>
+                    <h3 className="text-xl" style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}>
                       {m.name}
                     </h3>
-                    {m.role && <p className="mt-1 text-sm text-[var(--brand-pink)]">{m.role}</p>}
-                    {m.services && <p className="mt-3 text-sm text-black/60">{m.services}</p>}
+                    {m.role && <p className="mt-1 text-sm font-medium text-[#ED2F78]">{m.role}</p>}
+                    {m.services && <p className="mt-3 text-sm text-[#09090B]/65">{m.services}</p>}
                   </article>
                 </FadeIn>
               ))}
@@ -187,16 +192,16 @@ export default async function HomePage() {
         </section>
       )}
 
-      <section className="bg-[var(--brand-black)] py-20 text-white md:py-24">
+      <section className="bg-[#09090B] py-16 text-white md:py-24">
         <div className="mx-auto max-w-7xl px-4 text-center md:px-6">
           <FadeIn>
             <h2
-              className="text-4xl text-[var(--brand-pink-bright)] md:text-5xl"
-              style={{ fontFamily: "var(--font-script), cursive" }}
+              className="text-4xl text-[#FF3F87] md:text-5xl"
+              style={{ fontFamily: "var(--font-great-vibes), 'Great Vibes', cursive" }}
             >
               Angel Nails
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-white/70">
+            <p className="mx-auto mt-4 max-w-xl text-white/85">
               Κλείστε το ραντεβού σας online μέσω Treatwell.
             </p>
             <div className="mt-8 flex justify-center">

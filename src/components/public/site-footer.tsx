@@ -3,6 +3,16 @@ import { BrandLogo } from "@/components/public/brand-logo";
 import { ButtonLink } from "@/components/ui/button-link";
 import type { OpeningHour, SiteSettings, SocialLink } from "@prisma/client";
 
+const DEFAULT_HOURS: OpeningHour[] = [
+  { id: "1", dayOfWeek: 1, dayNameEl: "Δευτέρα", openTime: null, closeTime: null, closed: true, updatedAt: new Date() },
+  { id: "2", dayOfWeek: 2, dayNameEl: "Τρίτη", openTime: "09:00", closeTime: "21:00", closed: false, updatedAt: new Date() },
+  { id: "3", dayOfWeek: 3, dayNameEl: "Τετάρτη", openTime: "09:00", closeTime: "21:00", closed: false, updatedAt: new Date() },
+  { id: "4", dayOfWeek: 4, dayNameEl: "Πέμπτη", openTime: "09:00", closeTime: "21:00", closed: false, updatedAt: new Date() },
+  { id: "5", dayOfWeek: 5, dayNameEl: "Παρασκευή", openTime: "09:00", closeTime: "21:00", closed: false, updatedAt: new Date() },
+  { id: "6", dayOfWeek: 6, dayNameEl: "Σάββατο", openTime: "09:00", closeTime: "17:00", closed: false, updatedAt: new Date() },
+  { id: "0", dayOfWeek: 0, dayNameEl: "Κυριακή", openTime: null, closeTime: null, closed: true, updatedAt: new Date() },
+];
+
 export function SiteFooter({
   settings,
   hours,
@@ -12,17 +22,18 @@ export function SiteFooter({
   hours: OpeningHour[];
   socials: SocialLink[];
 }) {
-  const orderedHours = [...hours].sort((a, b) => {
+  const source = hours.length > 0 ? hours : DEFAULT_HOURS;
+  const orderedHours = [...source].sort((a, b) => {
     const order = [1, 2, 3, 4, 5, 6, 0];
     return order.indexOf(a.dayOfWeek) - order.indexOf(b.dayOfWeek);
   });
 
   return (
-    <footer className="bg-[var(--brand-black)] text-white">
+    <footer className="bg-[#09090B] text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-2 md:px-6 lg:grid-cols-4">
         <div className="space-y-4">
-          <BrandLogo inverted showTagline />
-          <p className="max-w-xs text-sm text-white/65">
+          <BrandLogo showTagline />
+          <p className="max-w-xs text-sm text-white/80">
             Σύγχρονο nail & beauty studio στους Αγίους Αναργύρους.
           </p>
           <ButtonLink href={settings.treatwellUrl} external size="sm">
@@ -31,10 +42,10 @@ export function SiteFooter({
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white">
             Πλοήγηση
           </h3>
-          <ul className="space-y-2 text-sm text-white/70">
+          <ul className="space-y-2 text-sm text-white/85">
             {[
               ["/", "Αρχική"],
               ["/services", "Υπηρεσίες"],
@@ -43,7 +54,7 @@ export function SiteFooter({
               ["/contact", "Επικοινωνία"],
             ].map(([href, label]) => (
               <li key={href}>
-                <Link href={href} className="hover:text-white">
+                <Link href={href} className="transition hover:text-[#FF3F87]">
                   {label}
                 </Link>
               </li>
@@ -52,28 +63,28 @@ export function SiteFooter({
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white">
             Επικοινωνία
           </h3>
-          <ul className="space-y-2 text-sm text-white/70">
+          <ul className="space-y-2 text-sm text-white/85">
             <li>{settings.addressLine1}</li>
             <li>
               {settings.city}, {settings.postalCode}
             </li>
             <li>
-              <a href={`tel:${settings.phonePrimary}`} className="hover:text-white">
+              <a href={`tel:${settings.phonePrimary}`} className="hover:text-[#FF3F87]">
                 {settings.phonePrimary}
               </a>
             </li>
             {settings.phoneSecondary && (
               <li>
-                <a href={`tel:${settings.phoneSecondary}`} className="hover:text-white">
+                <a href={`tel:${settings.phoneSecondary}`} className="hover:text-[#FF3F87]">
                   {settings.phoneSecondary}
                 </a>
               </li>
             )}
             <li>
-              <a href={`mailto:${settings.email}`} className="hover:text-white">
+              <a href={`mailto:${settings.email}`} className="hover:text-[#FF3F87]">
                 {settings.email}
               </a>
             </li>
@@ -86,7 +97,7 @@ export function SiteFooter({
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-[var(--brand-pink-bright)] hover:underline"
+                    className="text-sm text-[#FF3F87] hover:underline"
                   >
                     {s.label}
                   </a>
@@ -97,10 +108,10 @@ export function SiteFooter({
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-white">
             Ωράριο
           </h3>
-          <ul className="space-y-2 text-sm text-white/70">
+          <ul className="space-y-2 text-sm text-white/85">
             {orderedHours.map((h) => (
               <li key={h.id} className="flex justify-between gap-4">
                 <span>{h.dayNameEl}</span>
@@ -111,8 +122,8 @@ export function SiteFooter({
         </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-xs text-white/50 md:flex-row md:items-center md:justify-between md:px-6">
+      <div className="border-t border-white/15">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-xs text-white/70 md:flex-row md:items-center md:justify-between md:px-6">
           <p>© {new Date().getFullYear()} Angel Nails</p>
           <div className="flex flex-wrap gap-4">
             <Link href="/privacy-policy" className="hover:text-white">

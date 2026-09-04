@@ -11,6 +11,13 @@ import type {
   SocialLink,
   TeamMember,
 } from "@prisma/client";
+import {
+  FALLBACK_FEATURED,
+  FALLBACK_GALLERY,
+  FALLBACK_PAGES,
+  FALLBACK_SERVICES,
+  FALLBACK_TEAM,
+} from "@/lib/services/fallbacks";
 
 const defaultSettings = {
   id: "default",
@@ -89,10 +96,12 @@ export const getSeoSettings = cache(async () => {
 });
 
 export const getPageContentMap = cache(async () => {
-  return safe(async () => {
-    const pages = await prisma.pageContent.findMany();
-    return Object.fromEntries(pages.map((p) => [p.key, p]));
+  const pages = await safe(async () => {
+    const rows = await prisma.pageContent.findMany();
+    return Object.fromEntries(rows.map((p) => [p.key, p]));
   }, {} as Record<string, PageContent>);
+
+  return { ...FALLBACK_PAGES, ...pages } as Record<string, PageContent>;
 });
 
 export const getOpeningHours = cache(async () => {
@@ -114,7 +123,7 @@ export const getSocialLinks = cache(async () => {
 });
 
 export const getActiveServices = cache(async () => {
-  return safe(
+  const rows = await safe(
     () =>
       prisma.service.findMany({
         where: { active: true, pendingData: false },
@@ -123,10 +132,11 @@ export const getActiveServices = cache(async () => {
       }),
     [] as (Service & { category: ServiceCategory })[],
   );
+  return rows.length > 0 ? rows : FALLBACK_SERVICES;
 });
 
 export const getFeaturedServices = cache(async () => {
-  return safe(async () => {
+  const rows = await safe(async () => {
     const featured = await prisma.service.findMany({
       where: { active: true, featured: true, pendingData: false },
       include: { category: true },
@@ -141,6 +151,7 @@ export const getFeaturedServices = cache(async () => {
       take: 6,
     });
   }, [] as (Service & { category: ServiceCategory })[]);
+  return rows.length > 0 ? rows : FALLBACK_FEATURED;
 });
 
 export const getCategories = cache(async () => {
@@ -155,7 +166,7 @@ export const getCategories = cache(async () => {
 });
 
 export const getGalleryImages = cache(async (opts?: { featuredOnly?: boolean }) => {
-  return safe(
+  const rows = await safe(
     () =>
       prisma.galleryImage.findMany({
         where: { active: true, ...(opts?.featuredOnly ? { featured: true } : {}) },
@@ -163,10 +174,12 @@ export const getGalleryImages = cache(async (opts?: { featuredOnly?: boolean }) 
       }),
     [] as GalleryImage[],
   );
+  if (rows.length > 0) return rows;
+  return opts?.featuredOnly ? FALLBACK_GALLERY.filter((g) => g.featured) : FALLBACK_GALLERY;
 });
 
 export const getTeamMembers = cache(async () => {
-  return safe(
+  const rows = await safe(
     () =>
       prisma.teamMember.findMany({
         where: { active: true },
@@ -174,6 +187,7 @@ export const getTeamMembers = cache(async () => {
       }),
     [] as TeamMember[],
   );
+  return rows.length > 0 ? rows : FALLBACK_TEAM;
 });
 
 export const getLegalPage = cache(async (slug: string) => {

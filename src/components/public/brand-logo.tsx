@@ -9,28 +9,24 @@ type Props = {
 
 export function BrandLogo({ className, showTagline = false, inverted = false, size = "md" }: Props) {
   const sizes = {
-    sm: "text-2xl",
-    md: "text-3xl md:text-[2rem]",
+    sm: "text-[1.75rem]",
+    md: "text-3xl md:text-[2.1rem]",
     lg: "text-4xl md:text-5xl",
   };
 
   return (
     <div className={cn("leading-none", className)}>
       <div
-        className={cn(
-          "font-[family-name:var(--font-script)] tracking-tight",
-          sizes[size],
-          inverted ? "text-white" : "text-[var(--brand-pink)]",
-        )}
-        style={{ fontFamily: "var(--font-script), cursive" }}
+        className={cn(sizes[size], inverted ? "text-white" : "text-[#FF3F87]")}
+        style={{ fontFamily: "var(--font-great-vibes), 'Great Vibes', cursive" }}
       >
-        Angel <span className="italic">Nails</span>
+        Angel Nails
       </div>
       {showTagline && (
         <p
           className={cn(
-            "mt-1 text-[10px] uppercase tracking-[0.22em]",
-            inverted ? "text-white/70" : "text-[var(--brand-marble)]",
+            "mt-1 text-[10px] font-medium uppercase tracking-[0.18em]",
+            inverted ? "text-white/80" : "text-white/75",
           )}
         >
           Μανικιούρ • Πεντικιούρ • Τεχνητά Νύχια

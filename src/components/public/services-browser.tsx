@@ -46,10 +46,10 @@ export function ServicesBrowser({
               key={f}
               type="button"
               onClick={() => setFilter(f)}
-              className={`rounded-md px-3 py-2 text-sm transition ${
+              className={`rounded-md px-3 py-2 text-sm font-medium transition ${
                 filter === f
-                  ? "bg-[var(--brand-black)] text-white"
-                  : "border border-[var(--brand-warm-grey)] text-black/70 hover:border-[var(--brand-pink)]"
+                  ? "bg-[#09090B] text-white"
+                  : "border border-[#D8D5D2] text-[#09090B] hover:border-[#ED2F78]"
               }`}
             >
               {f}

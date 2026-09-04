@@ -1,0 +1,201 @@
+import type { Service, ServiceCategory, TeamMember, GalleryImage, PageContent } from "@prisma/client";
+
+const cat = (id: string, name: string, slug: string, filterGroup: string): ServiceCategory =>
+  ({
+    id,
+    name,
+    slug,
+    description: null,
+    filterGroup,
+    displayOrder: 0,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }) as ServiceCategory;
+
+export const FALLBACK_CATEGORIES: ServiceCategory[] = [
+  cat("c-man", "Μανικιούρ", "manikioyr", "Μανικιούρ"),
+  cat("c-ped", "Πεντικιούρ", "pentikioyr", "Πεντικιούρ"),
+  cat("c-art", "Τεχνητά Νύχια", "technita-nychia", "Τεχνητά Νύχια"),
+  cat("c-wax", "Αποτρίχωση", "apotrixosi", "Αποτρίχωση"),
+  cat("c-ex", "Nail Extras", "nail-extras", "Nail Extras"),
+];
+
+function svc(
+  id: string,
+  name: string,
+  slug: string,
+  category: ServiceCategory,
+  price: number,
+  durationLabel: string,
+  featured = false,
+  priceFrom = false,
+): Service & { category: ServiceCategory } {
+  return {
+    id,
+    name,
+    slug,
+    categoryId: category.id,
+    category,
+    description: null,
+    price: price as unknown as Service["price"],
+    priceFrom,
+    durationMin: null,
+    durationMax: null,
+    durationLabel,
+    featured,
+    active: true,
+    pendingData: false,
+    displayOrder: 0,
+    imageUrl: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+}
+
+export const FALLBACK_SERVICES: (Service & { category: ServiceCategory })[] = [
+  svc("s1", "Μανικιούρ Χωρίς Βάψιμο", "manikioyr-xoris-vapsimo", FALLBACK_CATEGORIES[0], 15, "45 λεπτά", true),
+  svc("s2", "Μανικιούρ Απλό Μανό", "manikioyr-aplo-mano", FALLBACK_CATEGORIES[0], 20, "1 ώρα", true),
+  svc("s3", "Μανικιούρ Ημιμόνιμο", "manikioyr-imimonimo", FALLBACK_CATEGORIES[0], 23, "1 ώρα", true),
+  svc("s4", "Μανικιούρ Ενισχυμένη Βάση", "manikioyr-enischymeni-vasi", FALLBACK_CATEGORIES[0], 25, "1 ώρα", true),
+  svc("s5", "Πεντικιούρ χωρίς Βάψιμο", "pentikioyr-xoris-vapsimo", FALLBACK_CATEGORIES[1], 18, "45 λεπτά", true),
+  svc("s6", "Πεντικιούρ Ημιμόνιμο", "pentikioyr-imimonimo", FALLBACK_CATEGORIES[1], 23, "1 ώρα 15 λεπτά", true),
+  svc("s7", "Πεντικιούρ Απλό Μανό", "pentikioyr-aplo-mano", FALLBACK_CATEGORIES[1], 20, "1 ώρα 15 λεπτά"),
+  svc("s8", "Πεντικιούρ Θεραπευτικό", "pentikioyr-therapeutiko", FALLBACK_CATEGORIES[1], 25, "1 ώρα 15 λεπτά"),
+  svc("s9", "Πεντικιούρ Αντρικό", "pentikioyr-antriko", FALLBACK_CATEGORIES[1], 15, "1 ώρα"),
+  svc("s10", "Επιμήκυνση με Ακρυλικό", "epimikynsi-akryliko", FALLBACK_CATEGORIES[2], 35, "2ώ – 2ώ 45λ", false, true),
+  svc("s11", "Επιμήκυνση με Acrygel", "epimikynsi-acrygel", FALLBACK_CATEGORIES[2], 40, "2ώ 30λ – 3ώ", false, true),
+  svc("s12", "Nail Art", "nail-art", FALLBACK_CATEGORIES[4], 1, "10 λεπτά", false, true),
+  svc("s13", "Καθαρισμός Φρυδιών", "katharismos-frydion", FALLBACK_CATEGORIES[3], 5, "15 λεπτά"),
+  svc("s14", "Σχηματισμός Φρυδιών", "schimatismos-frydion", FALLBACK_CATEGORIES[3], 10, "20 λεπτά"),
+];
+
+export const FALLBACK_FEATURED = FALLBACK_SERVICES.filter((s) => s.featured).slice(0, 6);
+
+export const FALLBACK_TEAM: TeamMember[] = [
+  {
+    id: "t1",
+    name: "Χριστίνα",
+    role: "Nail Artist",
+    services: "Νύχια, Πρόσωπο, Αποτρίχωση",
+    bio: null,
+    photoUrl: null,
+    displayOrder: 0,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "t2",
+    name: "Μαρία",
+    role: "Nail Artist",
+    services: "Νύχια",
+    bio: null,
+    photoUrl: null,
+    displayOrder: 1,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "t3",
+    name: "Βίκυ",
+    role: "Nail Artist",
+    services: "Νύχια, Πρόσωπο, Αποτρίχωση",
+    bio: null,
+    photoUrl: null,
+    displayOrder: 2,
+    active: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+export const FALLBACK_GALLERY: GalleryImage[] = [
+  {
+    id: "g1",
+    title: "Angel Nails storefront",
+    category: "Χώρος",
+    description: null,
+    altText: "Ταμπέλα Angel Nails",
+    imageUrl: "/images/store/venue-1.png",
+    featured: true,
+    active: true,
+    displayOrder: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "g2",
+    title: "Χώρος",
+    category: "Χώρος",
+    description: null,
+    altText: "Χώρος Angel Nails",
+    imageUrl: "/images/store/venue-2.jpg",
+    featured: true,
+    active: true,
+    displayOrder: 1,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "g3",
+    title: "Studio",
+    category: "Νύχια",
+    description: null,
+    altText: "Nail studio",
+    imageUrl: "/images/store/venue-3.jpg",
+    featured: true,
+    active: true,
+    displayOrder: 2,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "g4",
+    title: "Detail",
+    category: "Χώρος",
+    description: null,
+    altText: "Λεπτομέρεια χώρου",
+    imageUrl: "/images/store/venue-4.jpg",
+    featured: true,
+    active: true,
+    displayOrder: 3,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+export const FALLBACK_PAGES: Record<string, Partial<PageContent>> = {
+  "home.hero": {
+    key: "home.hero",
+    title: "Angel Nails",
+    subtitle: "Η περιποίηση των άκρων, στη δική μας αισθητική.",
+    body: "Μανικιούρ • Πεντικιούρ • Τεχνητά Νύχια • Nail Care",
+    imageUrl: "/images/store/venue-1.png",
+  },
+  "home.intro": {
+    key: "home.intro",
+    title: "Σύγχρονο nail studio στους Αγίους Αναργύρους",
+    subtitle: "Λεπτομέρεια. Αισθητική. Φροντίδα.",
+    body: "Ένας σύγχρονος χώρος ομορφιάς και περιποίησης αφιερωμένος στη λεπτομέρεια, την αισθητική και τη φροντίδα κάθε επισκέπτη. Στο Angel Nails προσφέρουμε μανικιούρ, πεντικιούρ, ημιμόνιμο, τεχνητά νύχια, nail care, nail design, καθώς και υπηρεσίες αποτρίχωσης με κλωστή και κερί.",
+  },
+  "home.services": {
+    key: "home.services",
+    title: "Οι υπηρεσίες μας",
+    subtitle: "Επιλεγμένες θεραπείες για χέρια, πόδια και nail design.",
+  },
+  about: {
+    key: "about",
+    title: "Σχετικά με το Angel Nails",
+    subtitle: "Ο χώρος και η εμπειρία",
+    body: "Το Angel Nails στους Αγίους Αναργύρους είναι ένας σύγχρονος χώρος ομορφιάς και περιποίησης που προσφέρει ολοκληρωμένες υπηρεσίες αισθητικής με έμφαση στη φροντίδα των άκρων.",
+    imageUrl: "/images/store/venue-1.png",
+  },
+  contact: {
+    key: "contact",
+    title: "Επικοινωνία",
+    subtitle: "Πώς θα μας βρείτε",
+    body: "Βρισκόμαστε στους Αγίους Αναργύρους, στην Ηρώων Πολυτεχνείου 25. Κλείστε ραντεβού μέσω Treatwell ή επικοινωνήστε μαζί μας τηλεφωνικά.",
+  },
+};
