@@ -23,11 +23,19 @@ const greatVibes = Great_Vibes({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [seo, settings] = await Promise.all([getSeoSettings(), getSiteSettings()]);
-  return {
-    ...buildMetadata({ seo, ogImage: settings.heroImageUrl || seo.ogImageUrl }),
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
-  };
+  try {
+    const [seo, settings] = await Promise.all([getSeoSettings(), getSiteSettings()]);
+    return {
+      ...buildMetadata({ seo, ogImage: settings.heroImageUrl || seo.ogImageUrl }),
+      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+    };
+  } catch {
+    return {
+      title: "Angel Nails | Μανικιούρ & Πεντικιούρ στους Αγίους Αναργύρους",
+      description:
+        "Angel Nails στους Αγίους Αναργύρους. Μανικιούρ, πεντικιούρ, ημιμόνιμο, τεχνητά νύχια, nail care και υπηρεσίες ομορφιάς.",
+    };
+  }
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
