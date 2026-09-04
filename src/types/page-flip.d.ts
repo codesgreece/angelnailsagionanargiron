@@ -13,8 +13,10 @@ declare module "page-flip" {
     loadFromImages(images: string[]): void;
     flipNext(corner?: "top" | "bottom"): void;
     flipPrev(corner?: "top" | "bottom"): void;
+    flip(page: number, corner?: "top" | "bottom"): void;
     turnToNextPage(): void;
     turnToPrevPage(): void;
+    turnToPage(page: number): void;
     getCurrentPageIndex(): number;
     getPageCount(): number;
     destroy(): void;

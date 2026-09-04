@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PageFlip } from "page-flip";
 import type { LookbookData } from "@/lib/lookbook/types";
@@ -14,8 +14,10 @@ type Props = {
 
 export function FlipBook({ data, compact = false, className }: Props) {
   const { settings, pages } = data;
+  const shellRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
   const flipRef = useRef<PageFlip | null>(null);
+  const pageIndexRef = useRef(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [ready, setReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -29,36 +31,50 @@ export function FlipBook({ data, compact = false, className }: Props) {
   }, []);
 
   const total = pages.length;
-  const imageUrls = useMemo(() => pages.map((p) => p.imageUrl), [pages]);
 
   const pageLabel = useMemo(() => {
     if (total === 0) return "00 / 00";
     if (isMobile) {
       return `${String(pageIndex + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
     }
-    const end = Math.min(pageIndex + (isMobile ? 1 : 2), total);
-    // In landscape StPageFlip shows spreads; portrait shows one page.
-    return isMobile
-      ? `${String(pageIndex + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
-      : `${String(pageIndex + 1).padStart(2, "0")}–${String(end).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+    const end = Math.min(pageIndex + 2, total);
+    return `${String(pageIndex + 1).padStart(2, "0")}–${String(end).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
   }, [isMobile, pageIndex, total]);
 
   const active = pages[pageIndex] || pages[0];
 
   const dims = useMemo(() => {
     if (compact) {
-      return isMobile ? { w: 230, h: 320 } : { w: 260, h: 360 };
+      return isMobile ? { w: 220, h: 310 } : { w: 250, h: 350 };
     }
-    return isMobile ? { w: 250, h: 350 } : { w: 320, h: 440 };
+    return isMobile ? { w: 240, h: 340 } : { w: 300, h: 420 };
   }, [compact, isMobile]);
 
   useEffect(() => {
-    if (!hostRef.current || imageUrls.length === 0) return;
+    pageIndexRef.current = pageIndex;
+  }, [pageIndex]);
 
-    const el = hostRef.current;
-    el.innerHTML = "";
+  useEffect(() => {
+    if (!hostRef.current || !shellRef.current || total === 0) return;
 
-    const flip = new PageFlip(el, {
+    const mount = document.createElement("div");
+    mount.className = "lookbook-stf-mount";
+    hostRef.current.replaceChildren(mount);
+
+    for (const page of pages) {
+      const leaf = document.createElement("div");
+      leaf.className = "lookbook-stf-page";
+      leaf.dataset.density = "soft";
+      const img = document.createElement("img");
+      img.src = page.imageUrl;
+      img.alt = page.altText || page.title;
+      img.draggable = false;
+      img.loading = "eager";
+      leaf.appendChild(img);
+      mount.appendChild(leaf);
+    }
+
+    const flip = new PageFlip(mount, {
       width: dims.w,
       height: dims.h,
       size: "fixed",
@@ -67,53 +83,66 @@ export function FlipBook({ data, compact = false, className }: Props) {
       minHeight: dims.h,
       maxHeight: dims.h,
       drawShadow: true,
-      flippingTime: 850,
+      flippingTime: 900,
       usePortrait: true,
-      startZIndex: 2,
+      startZIndex: 5,
       autoSize: false,
-      maxShadowOpacity: 0.6,
+      maxShadowOpacity: 0.65,
       showCover: false,
       mobileScrollSupport: true,
-      swipeDistance: 24,
+      swipeDistance: 22,
       clickEventForward: false,
       useMouseEvents: true,
       showPageCorners: true,
-      disableFlipByClick: true,
+      // Must be false — when true, flipPrev/flipNext are blocked by corner checks
+      disableFlipByClick: false,
       startPage: 0,
     });
 
-    flip.loadFromImages(imageUrls);
+    flip.loadFromHTML(mount.querySelectorAll(".lookbook-stf-page"));
+
     flip.on("flip", (e) => {
-      if (typeof e.data === "number") setPageIndex(e.data);
+      if (typeof e.data === "number") {
+        pageIndexRef.current = e.data;
+        setPageIndex(e.data);
+      }
     });
     flip.on("init", (e) => {
       const d = e.data;
-      setPageIndex(typeof d === "object" && d ? d.page : 0);
+      const idx = typeof d === "object" && d ? d.page : 0;
+      pageIndexRef.current = idx;
+      setPageIndex(idx);
       setReady(true);
     });
+
     flipRef.current = flip;
 
     return () => {
       flipRef.current = null;
       setReady(false);
       try {
-        // Avoid PageFlip.destroy() — it removes the React-managed node.
-        el.querySelector(".stf__wrapper")?.remove();
-        el.classList.remove("stf__parent");
-        el.replaceChildren();
+        flip.destroy();
       } catch {
         // ignore
       }
+      if (hostRef.current) hostRef.current.replaceChildren();
     };
-  }, [dims.h, dims.w, imageUrls]);
+  }, [dims.h, dims.w, pages, total]);
 
-  const goNext = useCallback(() => {
-    flipRef.current?.flipNext("top");
-  }, []);
+  const goTo = useCallback(
+    (target: number) => {
+      const flip = flipRef.current;
+      if (!flip || !ready) return;
+      const next = Math.max(0, Math.min(total - 1, target));
+      if (next === pageIndexRef.current) return;
+      // flip(page) animates with paper curl in both directions
+      flip.flip(next, "top");
+    },
+    [ready, total],
+  );
 
-  const goPrev = useCallback(() => {
-    flipRef.current?.flipPrev("top");
-  }, []);
+  const goNext = useCallback(() => goTo(pageIndexRef.current + 1), [goTo]);
+  const goPrev = useCallback(() => goTo(pageIndexRef.current - 1), [goTo]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -144,23 +173,32 @@ export function FlipBook({ data, compact = false, className }: Props) {
     >
       <div className="lookbook-ambient" />
 
-      <div className="relative z-10 mx-auto flex flex-col items-center px-4 py-4">
+      <div className="relative z-10 mx-auto flex flex-col items-center px-4 py-6">
         <div
-          className={`lookbook-book-shell ${compact ? "is-compact" : ""} ${isMobile ? "is-mobile" : ""}`}
+          ref={shellRef}
+          className={`lookbook-book-shell ${compact ? "is-compact" : ""} ${isMobile ? "is-mobile" : "is-desktop"}`}
+          style={
+            {
+              ["--book-w" as string]: `${dims.w}px`,
+              ["--book-h" as string]: `${dims.h}px`,
+            } as CSSProperties
+          }
         >
+          <div className="lookbook-table" aria-hidden />
           <div className="lookbook-floor-shadow" />
-          <div
-            ref={hostRef}
-            className="lookbook-stf"
-            style={{
-              width: dims.w,
-              height: dims.h,
-            }}
-          />
+
+          {/* Physical book case */}
+          <div className="lookbook-case">
+            <div className="lookbook-case-back" />
+            <div className="lookbook-case-spine" />
+            <div className="lookbook-case-pages" />
+            <div className="lookbook-case-edge" />
+            <div ref={hostRef} className="lookbook-stf-host" />
+          </div>
         </div>
 
         {active && (
-          <div className="mt-6 max-w-sm px-2 text-center">
+          <div className="mt-7 max-w-sm px-2 text-center">
             <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#FF3F87]">
               {active.category}
             </p>
