@@ -144,6 +144,9 @@ export function FlipBook({ data, compact = false, className }: Props) {
     if (pageIndexRef.current >= total - 1) return;
     busyRef.current = true;
     flip.flipNext("top");
+    window.setTimeout(() => {
+      busyRef.current = false;
+    }, 1100);
   }, [ready, total]);
 
   const goPrev = useCallback(() => {
@@ -152,6 +155,9 @@ export function FlipBook({ data, compact = false, className }: Props) {
     if (pageIndexRef.current <= 0) return;
     busyRef.current = true;
     flip.flip(pageIndexRef.current - 1, "top");
+    window.setTimeout(() => {
+      busyRef.current = false;
+    }, 1100);
   }, [ready]);
 
   // Reliable swipe — avoids broken library flipPrev in portrait mode
