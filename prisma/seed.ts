@@ -121,7 +121,7 @@ async function main() {
   const pages = [
     {
       key: "home.hero",
-      title: "ANGEL NAILS",
+      title: "Angel Nails",
       subtitle: "Η περιποίηση των άκρων, στη δική μας αισθητική.",
       body: "Μανικιούρ • Πεντικιούρ • Τεχνητά Νύχια • Nail Care",
       ctaLabel: "Κλείσε Ραντεβού",

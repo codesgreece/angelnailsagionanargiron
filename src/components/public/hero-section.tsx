@@ -36,10 +36,10 @@ export function HeroSection({
         <FadeIn>
           <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/70">Άγιοι Ανάργυροι</p>
           <h1
-            className="max-w-3xl text-5xl leading-[0.95] text-[var(--brand-pink-bright)] md:text-7xl lg:text-8xl"
+            className="max-w-3xl text-6xl leading-[0.95] text-[var(--brand-pink-bright)] md:text-8xl lg:text-9xl"
             style={{ fontFamily: "var(--font-script), cursive" }}
           >
-            {title}
+            {title === "ANGEL NAILS" ? "Angel Nails" : title}
           </h1>
           <p className="mt-6 max-w-xl text-xl font-light leading-relaxed text-white/90 md:text-2xl">
             {subtitle}

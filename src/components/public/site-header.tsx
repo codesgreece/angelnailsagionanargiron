@@ -20,6 +20,7 @@ export function SiteHeader({ treatwellUrl }: { treatwellUrl: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -32,16 +33,18 @@ export function SiteHeader({ treatwellUrl }: { treatwellUrl: string }) {
     setOpen(false);
   }, [pathname]);
 
+  const solid = !isHome || scrolled || open;
+
   return (
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-        scrolled || open ? "bg-[var(--brand-black)]/95 backdrop-blur-md shadow-lg" : "bg-transparent",
+        solid ? "bg-[var(--brand-black)]/95 backdrop-blur-md shadow-lg" : "bg-transparent",
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-6">
         <Link href="/" aria-label="Angel Nails αρχική">
-          <BrandLogo size="sm" inverted />
+          <BrandLogo size="sm" />
         </Link>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Κύρια πλοήγηση">
@@ -50,7 +53,7 @@ export function SiteHeader({ treatwellUrl }: { treatwellUrl: string }) {
               key={item.href}
               href={item.href}
               className={cn(
-                "text-sm tracking-wide text-white/75 transition hover:text-white",
+                "text-sm tracking-wide text-white/85 transition hover:text-white",
                 pathname === item.href && "text-white",
               )}
             >
