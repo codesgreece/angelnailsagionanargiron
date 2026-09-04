@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PageFlip } from "page-flip";
 import type { LookbookData } from "@/lib/lookbook/types";
@@ -14,9 +14,9 @@ type Props = {
 
 export function FlipBook({ data, compact = false, className }: Props) {
   const { settings, pages } = data;
-  const shellRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
   const flipRef = useRef<PageFlip | null>(null);
+  const busyRef = useRef(false);
   const pageIndexRef = useRef(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [ready, setReady] = useState(false);
@@ -55,11 +55,13 @@ export function FlipBook({ data, compact = false, className }: Props) {
   }, [pageIndex]);
 
   useEffect(() => {
-    if (!hostRef.current || !shellRef.current || total === 0) return;
+    const host = hostRef.current;
+    if (!host || total === 0) return;
 
-    const mount = document.createElement("div");
-    mount.className = "lookbook-stf-mount";
-    hostRef.current.replaceChildren(mount);
+    // PageFlip MUST sit in a flat, non-transformed parent or pages vanish mid-flip.
+    const root = document.createElement("div");
+    root.className = "lookbook-stf-root";
+    host.replaceChildren(root);
 
     for (const page of pages) {
       const leaf = document.createElement("div");
@@ -69,12 +71,12 @@ export function FlipBook({ data, compact = false, className }: Props) {
       img.src = page.imageUrl;
       img.alt = page.altText || page.title;
       img.draggable = false;
-      img.loading = "eager";
+      img.decoding = "async";
       leaf.appendChild(img);
-      mount.appendChild(leaf);
+      root.appendChild(leaf);
     }
 
-    const flip = new PageFlip(mount, {
+    const flip = new PageFlip(root, {
       width: dims.w,
       height: dims.h,
       size: "fixed",
@@ -83,29 +85,34 @@ export function FlipBook({ data, compact = false, className }: Props) {
       minHeight: dims.h,
       maxHeight: dims.h,
       drawShadow: true,
-      flippingTime: 900,
+      flippingTime: 1000,
       usePortrait: true,
-      startZIndex: 5,
+      startZIndex: 1,
       autoSize: false,
-      maxShadowOpacity: 0.65,
+      maxShadowOpacity: 0.7,
       showCover: false,
-      mobileScrollSupport: true,
-      swipeDistance: 22,
+      mobileScrollSupport: false,
+      swipeDistance: 40,
       clickEventForward: false,
-      useMouseEvents: true,
-      showPageCorners: true,
-      // Must be false — when true, flipPrev/flipNext are blocked by corner checks
-      disableFlipByClick: false,
+      // Library swipe-prev is buggy in portrait; we handle gestures ourselves.
+      useMouseEvents: false,
+      showPageCorners: false,
+      disableFlipByClick: true,
       startPage: 0,
     });
 
-    flip.loadFromHTML(mount.querySelectorAll(".lookbook-stf-page"));
+    flip.loadFromHTML(root.querySelectorAll(".lookbook-stf-page"));
 
     flip.on("flip", (e) => {
+      busyRef.current = false;
       if (typeof e.data === "number") {
         pageIndexRef.current = e.data;
         setPageIndex(e.data);
       }
+    });
+    flip.on("changeState", (e) => {
+      const state = String(e.data);
+      busyRef.current = state === "flipping" || state === "user_fold";
     });
     flip.on("init", (e) => {
       const d = e.data;
@@ -113,6 +120,7 @@ export function FlipBook({ data, compact = false, className }: Props) {
       pageIndexRef.current = idx;
       setPageIndex(idx);
       setReady(true);
+      busyRef.current = false;
     });
 
     flipRef.current = flip;
@@ -120,29 +128,69 @@ export function FlipBook({ data, compact = false, className }: Props) {
     return () => {
       flipRef.current = null;
       setReady(false);
+      busyRef.current = false;
       try {
         flip.destroy();
       } catch {
         // ignore
       }
-      if (hostRef.current) hostRef.current.replaceChildren();
+      host.replaceChildren();
     };
   }, [dims.h, dims.w, pages, total]);
 
-  const goTo = useCallback(
-    (target: number) => {
-      const flip = flipRef.current;
-      if (!flip || !ready) return;
-      const next = Math.max(0, Math.min(total - 1, target));
-      if (next === pageIndexRef.current) return;
-      // flip(page) animates with paper curl in both directions
-      flip.flip(next, "top");
-    },
-    [ready, total],
-  );
+  const goNext = useCallback(() => {
+    const flip = flipRef.current;
+    if (!flip || !ready || busyRef.current) return;
+    if (pageIndexRef.current >= total - 1) return;
+    busyRef.current = true;
+    flip.flipNext("top");
+  }, [ready, total]);
 
-  const goNext = useCallback(() => goTo(pageIndexRef.current + 1), [goTo]);
-  const goPrev = useCallback(() => goTo(pageIndexRef.current - 1), [goTo]);
+  const goPrev = useCallback(() => {
+    const flip = flipRef.current;
+    if (!flip || !ready || busyRef.current) return;
+    if (pageIndexRef.current <= 0) return;
+    busyRef.current = true;
+    flip.flip(pageIndexRef.current - 1, "top");
+  }, [ready]);
+
+  // Reliable swipe — avoids broken library flipPrev in portrait mode
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    let startX: number | null = null;
+    let startY: number | null = null;
+    let startT = 0;
+
+    const onDown = (e: PointerEvent) => {
+      startX = e.clientX;
+      startY = e.clientY;
+      startT = Date.now();
+    };
+    const onUp = (e: PointerEvent) => {
+      if (startX == null || startY == null) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      const dt = Date.now() - startT;
+      startX = null;
+      startY = null;
+      if (dt > 600) return;
+      if (Math.abs(dx) < 36 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      if (dx < 0) goNext();
+      else goPrev();
+    };
+
+    host.addEventListener("pointerdown", onDown);
+    host.addEventListener("pointerup", onUp);
+    host.addEventListener("pointercancel", () => {
+      startX = null;
+      startY = null;
+    });
+    return () => {
+      host.removeEventListener("pointerdown", onDown);
+      host.removeEventListener("pointerup", onUp);
+    };
+  }, [goNext, goPrev, ready]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -175,24 +223,19 @@ export function FlipBook({ data, compact = false, className }: Props) {
 
       <div className="relative z-10 mx-auto flex flex-col items-center px-4 py-6">
         <div
-          ref={shellRef}
           className={`lookbook-book-shell ${compact ? "is-compact" : ""} ${isMobile ? "is-mobile" : "is-desktop"}`}
-          style={
-            {
-              ["--book-w" as string]: `${dims.w}px`,
-              ["--book-h" as string]: `${dims.h}px`,
-            } as CSSProperties
-          }
+          style={{
+            ["--book-w" as string]: `${dims.w}px`,
+            ["--book-h" as string]: `${dims.h}px`,
+          }}
         >
-          <div className="lookbook-table" aria-hidden />
           <div className="lookbook-floor-shadow" />
 
-          {/* Physical book case */}
-          <div className="lookbook-case">
-            <div className="lookbook-case-back" />
-            <div className="lookbook-case-spine" />
-            <div className="lookbook-case-pages" />
-            <div className="lookbook-case-edge" />
+          {/* Decorative hardcover frame — NO transforms on the flip host */}
+          <div className="lookbook-frame">
+            <span className="lookbook-frame-spine" aria-hidden />
+            <span className="lookbook-frame-stack" aria-hidden />
+            <span className="lookbook-frame-board" aria-hidden />
             <div ref={hostRef} className="lookbook-stf-host" />
           </div>
         </div>
