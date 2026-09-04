@@ -34,7 +34,7 @@ export default async function LookbookPage() {
       </div>
 
       <div className="mt-10 md:mt-14">
-        <FlipBook data={data} autoOpen />
+        <FlipBook data={data} />
       </div>
     </div>
   );

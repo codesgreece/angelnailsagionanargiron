@@ -295,7 +295,12 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
   };
 
   const flipAngle = flipProgress * 180;
-  const shade = 0.15 + flipProgress * 0.45;
+  const shade = 0.18 + flipProgress * 0.5;
+  const openAngle = 18; // degrees — resting V of an open book
+  const leftRest = openAngle;
+  const rightRest = -openAngle;
+  const rightFlip = flipping === "next" ? rightRest - flipProgress * (180 - openAngle) : rightRest;
+  const leftFlip = flipping === "prev" ? leftRest + flipProgress * (180 - openAngle) : leftRest;
 
   const preloadUrls = useMemo(() => {
     const set = new Set<string>();
@@ -350,7 +355,8 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
       >
-        <motion.div
+          <div className="lookbook-table" aria-hidden />
+          <motion.div
           className={bookClass}
           style={
             opened && !opening && !isMobile
@@ -441,16 +447,18 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
             </div>
           ) : (
             <div className="lb-open-stage">
+              <div className="lb-board left" />
+              <div className="lb-board right" />
               <div className="lb-open-spine" />
               <div className="lb-stack left" />
               <div className="lb-stack right" />
 
-              {/* Left page */}
+              {/* Left page — resting open angle */}
               <div
                 className="lb-leaf left"
                 style={{
                   zIndex: flipping === "prev" ? 8 : 3,
-                  transform: flipping === "prev" ? `rotateY(${flipAngle}deg)` : "rotateY(0deg)",
+                  transform: `rotateY(${leftFlip}deg)`,
                 }}
               >
                 <div className="lb-face">
@@ -479,10 +487,10 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
                 className="lb-leaf right"
                 style={{
                   zIndex: flipping === "next" ? 9 : 4,
-                  transform: flipping === "next" ? `rotateY(${-flipAngle}deg)` : "rotateY(0deg)",
+                  transform: `rotateY(${rightFlip}deg)`,
                   filter:
                     flipping === "next"
-                      ? `brightness(${1 - flipProgress * 0.18})`
+                      ? `brightness(${1 - flipProgress * 0.2})`
                       : undefined,
                 }}
               >
@@ -517,16 +525,21 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
                 </div>
               </div>
 
-              {/* Sheet under right leaf */}
               {flipping === "next" && pages[index + 3] && (
-                <div className="lb-leaf right" style={{ zIndex: 1 }}>
+                <div
+                  className="lb-leaf right"
+                  style={{ zIndex: 1, transform: `rotateY(${rightRest}deg)` }}
+                >
                   <div className="lb-face">
                     <PhotoPage page={pages[index + 3]} gutter="right" />
                   </div>
                 </div>
               )}
               {flipping === "next" && !pages[index + 3] && pages[index + 2] && (
-                <div className="lb-leaf right" style={{ zIndex: 1 }}>
+                <div
+                  className="lb-leaf right"
+                  style={{ zIndex: 1, transform: `rotateY(${rightRest}deg)` }}
+                >
                   <div className="lb-face">
                     <div className="absolute inset-0 bg-[#ebe4da]" />
                   </div>
