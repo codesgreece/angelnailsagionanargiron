@@ -1,405 +1,81 @@
 .lookbook-stage {
   --lb-accent: #ed2f78;
-  --lb-paper: #f2ebe2;
-  --lb-cover: #0c0c0e;
-  --lb-thickness: 22px;
-  --lb-open-angle: 18deg;
   position: relative;
   isolation: isolate;
-  min-height: 460px;
+  min-height: 360px;
 }
 
 .lookbook-ambient {
   pointer-events: none;
   position: absolute;
-  inset: -20% -12%;
+  inset: -12% -8%;
   background:
-    radial-gradient(ellipse 58% 44% at 50% 62%, rgba(237, 47, 120, 0.15), transparent 68%),
-    radial-gradient(ellipse 30% 24% at 70% 30%, rgba(255, 255, 255, 0.04), transparent 60%),
-    radial-gradient(ellipse 50% 28% at 50% 88%, rgba(0, 0, 0, 0.65), transparent 70%);
+    radial-gradient(ellipse 52% 42% at 50% 55%, rgba(237, 47, 120, 0.12), transparent 68%),
+    radial-gradient(ellipse 40% 24% at 50% 90%, rgba(0, 0, 0, 0.5), transparent 70%);
 }
 
-.lookbook-particles {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  opacity: 0.25;
-  background-image:
-    radial-gradient(1px 1px at 18% 28%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(1px 1px at 72% 48%, rgba(255, 200, 220, 0.35), transparent),
-    radial-gradient(1.5px 1.5px at 42% 70%, rgba(255, 255, 255, 0.28), transparent),
-    radial-gradient(1px 1px at 88% 22%, rgba(255, 255, 255, 0.32), transparent);
-  animation: lbFloat 18s ease-in-out infinite;
-}
-
-@keyframes lbFloat {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -8px, 0);
-  }
-}
-
-.lookbook-scene {
-  perspective: 1600px;
-  perspective-origin: 50% 35%;
-}
-
-.lookbook-table {
-  pointer-events: none;
-  position: absolute;
-  left: 50%;
-  bottom: 4%;
-  width: min(980px, 96vw);
-  height: 42%;
-  transform: translateX(-50%) rotateX(72deg);
-  transform-origin: center bottom;
-  background:
-    linear-gradient(180deg, rgba(20, 20, 24, 0.15), rgba(8, 8, 10, 0.85)),
-    radial-gradient(ellipse at center, rgba(237, 47, 120, 0.06), transparent 65%);
-  border-radius: 50%;
-  filter: blur(1px);
-  z-index: 0;
-}
-
-.lookbook-book {
+.lookbook-book-shell {
   position: relative;
-  margin: 0 auto;
-  transform-style: preserve-3d;
-  will-change: transform;
-  z-index: 2;
-}
-
-/* —— Closed hardcover (portrait) —— */
-.lookbook-book.is-closed {
-  width: min(280px, 62vw);
-  height: min(400px, 88vw);
-  transform: rotateX(22deg) rotateY(-32deg) rotateZ(4deg) translateY(8px);
-  cursor: pointer;
-}
-
-.lookbook-book.is-closed.compact {
-  width: min(230px, 54vw);
-  height: min(330px, 78vw);
-}
-
-.lookbook-book.is-opening {
-  transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1);
-  transform: rotateX(10deg) rotateY(-10deg) rotateZ(0) translateY(-18px) scale(1.05);
-}
-
-.lookbook-book.is-open {
-  width: min(860px, 92vw);
-  height: min(500px, 62vh);
-  transform: rotateX(10deg);
-}
-
-.lookbook-book.is-open.is-stable {
-  cursor: grab;
-  transform: rotateX(10deg);
-}
-
-.lookbook-book.is-open.is-stable:active {
-  cursor: grabbing;
-}
-
-.lookbook-book.is-open.compact {
-  width: min(600px, 90vw);
-  height: min(350px, 48vh);
-}
-
-.lookbook-book.is-open.mobile {
-  width: min(320px, 86vw);
-  height: min(480px, 70vh);
-  transform: rotateX(6deg);
-  cursor: grab;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .lookbook-floor-shadow {
+  pointer-events: none;
   position: absolute;
-  left: 6%;
-  right: 6%;
-  bottom: -34px;
-  height: 40px;
+  left: 12%;
+  right: 12%;
+  bottom: -18px;
+  height: 28px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7), transparent 72%);
-  filter: blur(14px);
-  transform: translateZ(-60px);
-  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), transparent 72%);
+  filter: blur(10px);
+  z-index: 0;
 }
 
-.lookbook-book.is-closed .lookbook-floor-shadow {
-  left: -12%;
-  right: -18%;
-  bottom: -26px;
-  height: 48px;
-}
-
-.lb-cover-wrap {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-
-.lb-cover-front,
-.lb-cover-back {
-  position: absolute;
-  inset: 0;
-  border-radius: 2px 5px 5px 2px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  overflow: hidden;
-  transform-style: preserve-3d;
-}
-
-.lb-cover-front {
-  background:
-    radial-gradient(ellipse at 28% 18%, rgba(237, 47, 120, 0.24), transparent 50%),
-    linear-gradient(155deg, #17171c 0%, #09090b 48%, #121216 100%);
-  box-shadow:
-    inset 0 0 80px rgba(0, 0, 0, 0.5),
-    inset 1px 0 0 rgba(255, 255, 255, 0.05),
-    0 24px 60px rgba(0, 0, 0, 0.55);
-  transform: translateZ(calc(var(--lb-thickness) / 2));
-}
-
-.lb-cover-front::before {
-  content: "";
-  position: absolute;
-  inset: 12px;
-  border: 1px solid rgba(237, 47, 120, 0.28);
-  pointer-events: none;
-}
-
-.lb-cover-back {
-  background: linear-gradient(160deg, #101014, #070709);
-  transform: rotateY(180deg) translateZ(calc(var(--lb-thickness) / 2));
-}
-
-.lb-spine-3d {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: var(--lb-thickness);
-  transform-origin: left center;
-  transform: rotateY(-90deg) translateX(calc(var(--lb-thickness) / -2));
-  background: linear-gradient(180deg, #1c1c22, #050507 42%, #15151a);
-  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.65);
-}
-
-.lb-page-block {
-  position: absolute;
-  top: 2.5%;
-  bottom: 2.5%;
-  right: 0;
-  width: var(--lb-thickness);
-  transform-origin: right center;
-  transform: rotateY(90deg) translateX(calc(var(--lb-thickness) / 2));
-  background: repeating-linear-gradient(
-    to bottom,
-    #f5efe7 0px,
-    #f5efe7 1px,
-    #e4dbcf 1px,
-    #e4dbcf 2.2px
-  );
-  box-shadow: inset 2px 0 8px rgba(0, 0, 0, 0.25);
-}
-
-.lb-top-edge {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: var(--lb-thickness);
-  transform-origin: top center;
-  transform: rotateX(90deg) translateY(calc(var(--lb-thickness) / -2));
-  background: linear-gradient(90deg, #1a1a1f, #e9e1d7 10%, #f4eee6 90%, #121216);
-}
-
-.lb-open-stage {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-
-/* Hard covers behind the open pages */
-.lb-board {
-  position: absolute;
-  top: -2%;
-  bottom: -2%;
-  width: 51%;
-  border-radius: 2px;
-  background: linear-gradient(160deg, #141418, #08080a);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
-  transform-style: preserve-3d;
-}
-
-.lb-board.left {
-  left: -1%;
-  transform-origin: right center;
-  transform: rotateY(var(--lb-open-angle)) translateZ(-6px);
-}
-
-.lb-board.right {
-  right: -1%;
-  transform-origin: left center;
-  transform: rotateY(calc(var(--lb-open-angle) * -1)) translateZ(-6px);
-}
-
-.lb-open-spine {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(50% - 5px);
-  width: 10px;
-  background: linear-gradient(90deg, #030304, #1e1e24 48%, #050507);
-  box-shadow: 0 0 22px rgba(0, 0, 0, 0.65);
-  z-index: 30;
-  border-radius: 1px;
-  transform: translateZ(4px);
-}
-
-.lb-stack {
-  position: absolute;
-  top: 1%;
-  bottom: 1%;
-  width: 14px;
-  background: repeating-linear-gradient(
-    to right,
-    #f0e8dd 0 1.6px,
-    #d6cdc0 1.6px 2.8px
-  );
-  box-shadow: inset -2px 0 6px rgba(0, 0, 0, 0.22);
-  z-index: 2;
-  transform: translateZ(1px);
-}
-
-.lb-stack.right {
-  right: -9px;
-}
-
-.lb-stack.left {
-  left: -9px;
-}
-
-.lb-leaf {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-.lb-leaf.left {
-  left: 0;
-  transform-origin: right center;
-}
-
-.lb-leaf.right {
-  right: 0;
-  transform-origin: left center;
-}
-
-.lb-leaf.single {
-  left: 0;
-  width: 100%;
-  transform-origin: left center;
-}
-
-.lb-face {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  background: #0e0e10;
-  box-shadow:
-    inset 0 0 50px rgba(0, 0, 0, 0.28),
-    0 14px 40px rgba(0, 0, 0, 0.4);
-}
-
-.lb-face.back {
-  transform: rotateY(180deg);
-  background: #ebe4da;
-}
-
-.lb-face.paper-back {
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.07), transparent 14%),
-    linear-gradient(#ebe4da, #f3eee7);
-}
-
-.lb-face .lb-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.lb-gutter {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-}
-
-.lb-gutter.left-gutter {
-  background: linear-gradient(90deg, transparent 70%, rgba(0, 0, 0, 0.38));
-}
-
-.lb-gutter.right-gutter {
-  background: linear-gradient(270deg, transparent 70%, rgba(0, 0, 0, 0.42));
-}
-
-.lb-flip-shade {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-}
-
-.lb-cover-art {
-  position: absolute;
-  inset: 0;
-  opacity: 0.2;
-  object-fit: cover;
-}
-
-.lb-cover-content {
+.lookbook-stf {
   position: relative;
   z-index: 2;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1.7rem 1.4rem;
-  text-align: center;
-  color: #fff;
+  margin: 0 auto;
 }
 
-@media (max-width: 768px) {
-  .lookbook-book.is-closed {
-    transform: rotateX(14deg) rotateY(-18deg) rotateZ(2deg);
-  }
+.lookbook-stf .stf__parent {
+  margin: 0 auto;
+}
 
-  .lookbook-table {
-    display: none;
-  }
+.lookbook-stf-page {
+  background: #0e0e10;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.lookbook-stf-page img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Soft paper feel while flipping */
+.lookbook-stf .stf__item.--soft {
+  background: #111;
+}
+
+.lookbook-book-shell.is-mobile .lookbook-stf {
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.45));
+}
+
+.lookbook-book-shell:not(.is-mobile) .lookbook-stf {
+  filter: drop-shadow(0 22px 36px rgba(0, 0, 0, 0.5));
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lookbook-particles {
-    animation: none;
-  }
-
-  .lookbook-book,
-  .lb-leaf,
-  .lookbook-book.is-opening {
+  .lookbook-stf * {
     transition: none !important;
+    animation: none !important;
   }
 }
