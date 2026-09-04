@@ -1,83 +1,247 @@
 .lookbook-stage {
   --lb-accent: #ed2f78;
-  --lb-paper: #f3efe8;
-  --lb-ink: #141218;
+  --lb-paper: #f2ebe2;
+  --lb-cover: #0c0c0e;
+  --lb-thickness: 18px;
   position: relative;
   isolation: isolate;
+  min-height: 420px;
 }
 
 .lookbook-ambient {
   pointer-events: none;
   position: absolute;
-  inset: -12%;
+  inset: -18% -10%;
   background:
-    radial-gradient(ellipse 48% 38% at 50% 48%, rgba(237, 47, 120, 0.16), transparent 70%),
-    radial-gradient(ellipse 32% 28% at 72% 28%, rgba(255, 255, 255, 0.05), transparent 60%),
-    radial-gradient(ellipse 36% 32% at 22% 72%, rgba(237, 47, 120, 0.07), transparent 65%);
+    radial-gradient(ellipse 55% 42% at 50% 58%, rgba(237, 47, 120, 0.14), transparent 68%),
+    radial-gradient(ellipse 28% 22% at 68% 32%, rgba(255, 255, 255, 0.045), transparent 62%),
+    radial-gradient(ellipse 40% 30% at 30% 78%, rgba(0, 0, 0, 0.55), transparent 70%);
 }
 
 .lookbook-particles {
   pointer-events: none;
   position: absolute;
   inset: 0;
-  opacity: 0.3;
+  opacity: 0.28;
   background-image:
-    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(1px 1px at 70% 50%, rgba(255, 200, 220, 0.4), transparent),
-    radial-gradient(1.5px 1.5px at 40% 75%, rgba(255, 255, 255, 0.32), transparent),
-    radial-gradient(1px 1px at 85% 20%, rgba(255, 255, 255, 0.38), transparent),
-    radial-gradient(1px 1px at 15% 80%, rgba(255, 180, 210, 0.3), transparent);
-  animation: lbFloat 16s ease-in-out infinite;
+    radial-gradient(1px 1px at 18% 28%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1px 1px at 72% 48%, rgba(255, 200, 220, 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 42% 70%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 88% 22%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 12% 82%, rgba(255, 180, 210, 0.28), transparent);
+  animation: lbFloat 18s ease-in-out infinite;
 }
 
 @keyframes lbFloat {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translate3d(0, -9px, 0);
   }
 }
 
 .lookbook-scene {
-  perspective: 2400px;
-  perspective-origin: 50% 42%;
+  perspective: 1800px;
+  perspective-origin: 50% 40%;
 }
 
 .lookbook-book {
   position: relative;
+  margin: 0 auto;
   transform-style: preserve-3d;
-  transform-origin: center center;
   will-change: transform;
 }
 
-.lookbook-shadow {
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: -20px;
-  height: 30px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), transparent 72%);
-  filter: blur(10px);
-  z-index: 0;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+/* —— Closed hardcover —— */
+.lookbook-book.is-closed {
+  width: min(270px, 58vw);
+  height: min(390px, 84vw);
+  transform: rotateX(18deg) rotateY(-28deg) rotateZ(3deg);
+  cursor: pointer;
 }
 
-.lookbook-spine {
+.lookbook-book.is-closed.compact {
+  width: min(220px, 52vw);
+  height: min(320px, 76vw);
+}
+
+.lookbook-book.is-opening {
+  transition: transform 1.05s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: rotateX(6deg) rotateY(-8deg) rotateZ(0deg) translateY(-14px) scale(1.04);
+}
+
+.lookbook-book.is-open {
+  width: min(920px, 94vw);
+  height: min(560px, 68vh);
+  transform: rotateX(4deg);
+}
+
+.lookbook-book.is-open.compact {
+  width: min(640px, 92vw);
+  height: min(390px, 52vh);
+}
+
+.lookbook-book.is-open.mobile {
+  width: min(340px, 88vw);
+  height: min(520px, 72vh);
+  transform: rotateX(2deg);
+}
+
+.lookbook-book.is-open.fullscreen-book {
+  width: min(1080px, 96vw);
+  height: min(680px, 78vh);
+}
+
+.lookbook-floor-shadow {
   position: absolute;
-  top: 1.5%;
-  bottom: 1.5%;
-  left: calc(50% - 3px);
-  width: 6px;
-  background: linear-gradient(90deg, #050507, #1c1c22 45%, #0a0a0c);
-  box-shadow: 0 0 14px rgba(0, 0, 0, 0.5);
-  z-index: 8;
+  left: 8%;
+  right: 8%;
+  bottom: -28px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65), transparent 72%);
+  filter: blur(12px);
+  transform: translateZ(-40px);
+  pointer-events: none;
+}
+
+.lookbook-book.is-closed .lookbook-floor-shadow {
+  left: -5%;
+  right: -15%;
+  bottom: -22px;
+  height: 42px;
+  opacity: 0.9;
+}
+
+/* Cover assembly (closed) */
+.lb-cover-wrap {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.lb-cover-front,
+.lb-cover-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px 4px 4px 2px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.lb-cover-front {
+  background:
+    radial-gradient(ellipse at 28% 18%, rgba(237, 47, 120, 0.22), transparent 50%),
+    linear-gradient(155deg, #16161a 0%, #09090b 48%, #121216 100%);
+  box-shadow:
+    inset 0 0 80px rgba(0, 0, 0, 0.45),
+    inset 1px 0 0 rgba(255, 255, 255, 0.04),
+    0 20px 50px rgba(0, 0, 0, 0.5);
+  transform: translateZ(calc(var(--lb-thickness) / 2));
+}
+
+.lb-cover-front::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(237, 47, 120, 0.22);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+.lb-cover-back {
+  background: linear-gradient(160deg, #101014, #08080a);
+  transform: rotateY(180deg) translateZ(calc(var(--lb-thickness) / 2));
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.lb-spine-3d {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--lb-thickness);
+  transform-origin: left center;
+  transform: rotateY(-90deg) translateX(calc(var(--lb-thickness) / -2));
+  background: linear-gradient(180deg, #1a1a1f, #050507 40%, #141418);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+.lb-page-block {
+  position: absolute;
+  top: 3%;
+  bottom: 3%;
+  right: 0;
+  width: var(--lb-thickness);
+  transform-origin: right center;
+  transform: rotateY(90deg) translateX(calc(var(--lb-thickness) / 2));
+  background: repeating-linear-gradient(
+    to bottom,
+    #f4eee6 0px,
+    #f4eee6 1px,
+    #e5ddd2 1px,
+    #e5ddd2 2px
+  );
+  box-shadow: inset 2px 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.lb-top-edge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--lb-thickness);
+  transform-origin: top center;
+  transform: rotateX(90deg) translateY(calc(var(--lb-thickness) / -2));
+  background: linear-gradient(90deg, #1a1a1f, #e8e0d6 8%, #f3ebe3 92%, #121216);
+}
+
+/* Open book pages */
+.lb-open-stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.lb-open-spine {
+  position: absolute;
+  top: 1%;
+  bottom: 1%;
+  left: calc(50% - 4px);
+  width: 8px;
+  background: linear-gradient(90deg, #050507, #222228 45%, #0a0a0c);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.55);
+  z-index: 20;
   border-radius: 1px;
 }
 
-.lookbook-leaf {
+.lb-stack {
+  position: absolute;
+  top: 1.2%;
+  bottom: 1.2%;
+  width: 11px;
+  background: repeating-linear-gradient(
+    to right,
+    #efe7dc 0 1.5px,
+    #d9d0c3 1.5px 2.5px
+  );
+  box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.18);
+  z-index: 2;
+}
+
+.lb-stack.right {
+  right: -7px;
+}
+
+.lb-stack.left {
+  left: -7px;
+}
+
+.lb-leaf {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -86,119 +250,99 @@
   will-change: transform;
 }
 
-.lookbook-leaf.left {
+.lb-leaf.left {
   left: 0;
   transform-origin: right center;
 }
 
-.lookbook-leaf.right {
+.lb-leaf.right {
   right: 0;
   transform-origin: left center;
 }
 
-.lookbook-leaf-face {
+.lb-leaf.single {
+  left: 0;
+  width: 100%;
+  transform-origin: left center;
+}
+
+.lb-face {
   position: absolute;
   inset: 0;
   overflow: hidden;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  background: var(--lb-paper);
-  color: var(--lb-ink);
+  background: #111;
   box-shadow:
-    inset 0 0 36px rgba(0, 0, 0, 0.07),
-    0 8px 28px rgba(0, 0, 0, 0.22);
+    inset 0 0 40px rgba(0, 0, 0, 0.25),
+    0 12px 36px rgba(0, 0, 0, 0.35);
 }
 
-.lookbook-leaf-face.back {
+.lb-face.back {
   transform: rotateY(180deg);
-  background:
-    linear-gradient(90deg, #e8e2d8, #f0ebe3 18%, #ebe5db);
+  background: #ebe4da;
 }
 
-.lookbook-leaf-face::after {
-  content: "";
+.lb-face.paper-back {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06), transparent 12%),
+    linear-gradient(#ebe4da, #f3eee7);
+}
+
+.lb-face img,
+.lb-face .lb-photo {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lb-gutter {
   pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+}
+
+.lb-gutter.left-gutter {
+  background: linear-gradient(90deg, transparent 82%, rgba(0, 0, 0, 0.28));
+}
+
+.lb-gutter.right-gutter {
+  background: linear-gradient(270deg, transparent 82%, rgba(0, 0, 0, 0.32));
+}
+
+.lb-flip-shade {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+}
+
+.lb-cover-art {
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  object-fit: cover;
+}
+
+.lb-cover-content {
+  position: relative;
   z-index: 2;
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.1), transparent 10%, transparent 90%, rgba(0, 0, 0, 0.07)),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  mix-blend-mode: multiply;
-}
-
-.lookbook-page-face {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background: var(--lb-paper);
-  color: var(--lb-ink);
-  box-shadow:
-    inset 0 0 40px rgba(0, 0, 0, 0.08),
-    0 10px 30px rgba(0, 0, 0, 0.25);
-}
-
-.lookbook-page-face::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.08), transparent 8%, transparent 92%, rgba(0, 0, 0, 0.06)),
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  mix-blend-mode: multiply;
-}
-
-.lookbook-cover-face {
-  background:
-    radial-gradient(ellipse at 30% 20%, rgba(237, 47, 120, 0.26), transparent 55%),
-    linear-gradient(160deg, #15151a 0%, #09090b 55%, #17171a 100%);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.6rem 1.35rem;
+  text-align: center;
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow:
-    inset 0 0 60px rgba(0, 0, 0, 0.35),
-    0 18px 50px rgba(0, 0, 0, 0.45);
 }
 
-.lookbook-cover-thickness {
-  position: absolute;
-  top: 1%;
-  bottom: 1%;
-  right: -5px;
-  width: 5px;
-  background: linear-gradient(90deg, #1a1a1f, #0a0a0c);
-  transform: translateZ(-2px);
-  border-radius: 0 2px 2px 0;
-}
-
-.lookbook-stack-edge {
-  position: absolute;
-  top: 1.5%;
-  bottom: 1.5%;
-  width: 9px;
-  background: repeating-linear-gradient(
-    to right,
-    #ebe4da 0 1px,
-    #d8cfc2 1px 2px
-  );
-  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.15);
-  z-index: 2;
-}
-
-.lookbook-stack-edge.right {
-  right: -5px;
-}
-
-.lookbook-stack-edge.left {
-  left: -5px;
-}
-
-.lookbook-flip-shade {
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  mix-blend-mode: multiply;
+@media (max-width: 768px) {
+  .lookbook-book.is-closed {
+    transform: rotateX(12deg) rotateY(-16deg) rotateZ(2deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -207,7 +351,8 @@
   }
 
   .lookbook-book,
-  .lookbook-leaf {
+  .lb-leaf,
+  .lookbook-book.is-opening {
     transition: none !important;
   }
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import {
   useCallback,
   useEffect,
@@ -11,9 +10,8 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
-import { ChevronLeft, ChevronRight, Maximize2, Minimize2, X, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2, Minimize2, X } from "lucide-react";
 import type { LookbookData, LookbookPage } from "@/lib/lookbook/types";
-import { formatPrice } from "@/lib/utils";
 import "./lookbook.css";
 
 type Props = {
@@ -23,90 +21,44 @@ type Props = {
   className?: string;
 };
 
-function PageContent({
+function PhotoPage({
   page,
-  treatwellUrl,
-  onZoom,
   priority,
+  onZoom,
+  gutter,
 }: {
   page: LookbookPage;
-  treatwellUrl: string;
-  onZoom: () => void;
   priority?: boolean;
+  onZoom?: () => void;
+  gutter?: "left" | "right" | "none";
 }) {
   return (
-    <div className="relative flex h-full flex-col">
-      <button
-        type="button"
-        className="relative block min-h-0 w-full flex-[1.35] overflow-hidden bg-[#ddd6ce]"
-        onClick={(e) => {
-          e.stopPropagation();
-          onZoom();
-        }}
-        aria-label={`Μεγέθυνση: ${page.title}`}
-      >
-        <Image
-          src={page.imageUrl}
-          alt={page.altText || page.title}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 92vw, 42vw"
-          loading={priority ? "eager" : "lazy"}
-          priority={priority}
-        />
-        <span className="absolute bottom-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-sm">
-          <ZoomIn size={14} />
-        </span>
-      </button>
-      <div className="space-y-1.5 p-4 md:p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#ED2F78]">
-          {page.category}
-        </p>
-        <h3
-          className="text-xl leading-tight text-[#141218] md:text-2xl"
-          style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
-        >
-          {page.title}
-        </h3>
-        {page.description && (
-          <p className="line-clamp-2 text-sm text-[#141218]/65">{page.description}</p>
-        )}
-        {(page.serviceName || page.servicePrice) && (
-          <p className="pt-1 text-xs text-[#141218]/55">
-            {[
-              page.serviceName,
-              page.serviceDuration,
-              page.servicePrice ? formatPrice(page.servicePrice) : null,
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
-        )}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          <a
-            href={treatwellUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="inline-flex min-h-9 items-center rounded-md bg-[#ED2F78] px-3 text-xs font-semibold"
-            style={{ color: "#FFFFFF" }}
-          >
-            Κλείσε Ραντεβού
-          </a>
-          <Link
-            href={`/gallery#${page.id}`}
-            onClick={(e) => e.stopPropagation()}
-            className="text-xs text-[#141218]/55 underline-offset-2 hover:underline"
-          >
-            View full photo
-          </Link>
-        </div>
-      </div>
-    </div>
+    <button
+      type="button"
+      className="lb-face relative block h-full w-full cursor-zoom-in border-0 p-0"
+      onClick={(e) => {
+        e.stopPropagation();
+        onZoom?.();
+      }}
+      aria-label={page.title}
+    >
+      <Image
+        src={page.imageUrl}
+        alt={page.altText || page.title}
+        fill
+        className="lb-photo object-cover"
+        sizes="(max-width: 768px) 90vw, 46vw"
+        loading={priority ? "eager" : "lazy"}
+        priority={priority}
+        draggable={false}
+      />
+      {gutter === "left" && <span className="lb-gutter left-gutter" />}
+      {gutter === "right" && <span className="lb-gutter right-gutter" />}
+    </button>
   );
 }
 
-function CoverFace({
+function CoverFront({
   title,
   subtitle,
   coverImageUrl,
@@ -118,45 +70,43 @@ function CoverFace({
   accent: string;
 }) {
   return (
-    <div className="lookbook-page-face lookbook-cover-face relative flex h-full flex-col justify-between p-6 md:p-8">
+    <div className="lb-cover-front">
       {coverImageUrl && (
         <Image
           src={coverImageUrl}
           alt=""
           fill
-          className="object-cover opacity-30"
-          sizes="40vw"
+          className="lb-cover-art"
+          sizes="280px"
           priority
         />
       )}
-      <div className="relative z-10">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-white/70">Angel Nails</p>
-        <div className="mt-3 h-px w-12" style={{ background: accent }} />
+      <div className="lb-cover-content">
+        <div>
+          <p className="text-[9px] font-semibold uppercase tracking-[0.32em] text-white/55">
+            Angel Nails
+          </p>
+          <div className="mx-auto mt-3 h-px w-10" style={{ background: accent }} />
+        </div>
+        <div>
+          <p
+            className="text-[2.35rem] leading-none text-[#FF3F87] md:text-[2.6rem]"
+            style={{ fontFamily: "var(--font-great-vibes), 'Great Vibes', cursive" }}
+          >
+            Angel Nails
+          </p>
+          <h2
+            className="mt-5 text-[1.05rem] font-semibold uppercase tracking-[0.18em] text-white md:text-lg"
+            style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
+          >
+            {title}
+          </h2>
+          <p className="mt-3 text-[9px] font-medium uppercase tracking-[0.28em] text-white/60">
+            {subtitle}
+          </p>
+        </div>
+        <p className="text-[9px] uppercase tracking-[0.24em] text-white/40">Nail Lookbook</p>
       </div>
-      <div className="relative z-10 text-center">
-        <p
-          className="text-4xl text-[#FF3F87] md:text-5xl"
-          style={{ fontFamily: "var(--font-great-vibes), 'Great Vibes', cursive" }}
-        >
-          Angel Nails
-        </p>
-        <h2
-          className="mt-4 text-2xl font-semibold tracking-[0.12em] text-white md:text-3xl"
-          style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
-        >
-          {title}
-        </h2>
-        <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.24em] text-white/75">{subtitle}</p>
-      </div>
-      <p className="relative z-10 text-[10px] uppercase tracking-[0.2em] text-white/50">Nail Lookbook</p>
-    </div>
-  );
-}
-
-function PaperBack() {
-  return (
-    <div className="flex h-full items-center justify-center">
-      <div className="h-[70%] w-px bg-black/10" />
     </div>
   );
 }
@@ -172,7 +122,6 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
   const [fullscreen, setFullscreen] = useState(false);
   const [zoomIdx, setZoomIdx] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [supports3d, setSupports3d] = useState(true);
   const stageRef = useRef<HTMLDivElement>(null);
   const dragStartX = useRef<number | null>(null);
   const dragging = useRef(false);
@@ -180,19 +129,29 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
 
   const tiltX = useMotionValue(0);
   const tiltY = useMotionValue(0);
-  const springX = useSpring(tiltX, { stiffness: 140, damping: 20 });
-  const springY = useSpring(tiltY, { stiffness: 140, damping: 20 });
+  const springX = useSpring(tiltX, { stiffness: 120, damping: 22 });
+  const springY = useSpring(tiltY, { stiffness: 120, damping: 22 });
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
     const apply = () => setIsMobile(mq.matches);
     apply();
     mq.addEventListener("change", apply);
-    const el = document.createElement("div");
-    el.style.cssText = "transform:rotateY(1deg);transform-style:preserve-3d";
-    setSupports3d(Boolean(el.style.transform) && !/Android [1-4]\./.test(navigator.userAgent));
     return () => mq.removeEventListener("change", apply);
   }, []);
+
+  const openBook = useCallback(() => {
+    if (opened || opening) return;
+    if (reduce) {
+      setOpened(true);
+      return;
+    }
+    setOpening(true);
+    window.setTimeout(() => {
+      setOpened(true);
+      setOpening(false);
+    }, 1050);
+  }, [opened, opening, reduce]);
 
   useEffect(() => {
     if (autoOpen) openBook();
@@ -203,41 +162,19 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
   const step = isMobile ? 1 : 2;
   const pageLabel =
     total === 0
-      ? "0 / 0"
+      ? "00 / 00"
       : isMobile
         ? `${String(index + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
         : `${String(index + 1).padStart(2, "0")}–${String(Math.min(index + 2, total)).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+
   const canPrev = opened && !opening && index > 0 && !flipping;
   const canNext = opened && !opening && index + step < total && !flipping;
 
   const leftPage = pages[index] || null;
   const rightPage = pages[index + 1] || null;
-  const nextRight = pages[index + 2] || null;
-  const prevLeft = pages[index - 2] || null;
+  const nextUnder = pages[index + 2] || null;
   const singlePage = pages[index] || null;
-
-  const cancelAnim = () => {
-    if (animRef.current != null) cancelAnimationFrame(animRef.current);
-    animRef.current = null;
-  };
-
-  const animateFlipTo = useCallback(
-    (target: number, onDone: () => void) => {
-      cancelAnim();
-      const start = flipProgress;
-      const t0 = performance.now();
-      const dur = 420;
-      const tick = (t: number) => {
-        const p = Math.min(1, (t - t0) / dur);
-        const eased = 1 - Math.pow(1 - p, 3);
-        setFlipProgress(start + (target - start) * eased);
-        if (p < 1) animRef.current = requestAnimationFrame(tick);
-        else onDone();
-      };
-      animRef.current = requestAnimationFrame(tick);
-    },
-    [flipProgress],
-  );
+  const activeCaption = leftPage || singlePage;
 
   const completeNext = useCallback(() => {
     setIndex((i) => Math.min(i + step, Math.max(0, total - 1)));
@@ -251,72 +188,51 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
     setFlipProgress(0);
   }, [step]);
 
+  const animateTo = useCallback((from: number, to: number, onDone: () => void) => {
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+    const t0 = performance.now();
+    const dur = 520;
+    const tick = (t: number) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setFlipProgress(from + (to - from) * eased);
+      if (p < 1) animRef.current = requestAnimationFrame(tick);
+      else onDone();
+    };
+    animRef.current = requestAnimationFrame(tick);
+  }, []);
+
   const goNext = useCallback(() => {
     if (!opened || opening || flipping || index + step >= total) return;
-    if (reduce || !supports3d) {
+    if (reduce) {
       completeNext();
       return;
     }
     setFlipping("next");
     setFlipProgress(0);
-    const start = performance.now();
-    const dur = 680;
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / dur);
-      setFlipProgress(1 - Math.pow(1 - p, 3));
-      if (p < 1) animRef.current = requestAnimationFrame(tick);
-      else completeNext();
-    };
-    animRef.current = requestAnimationFrame(tick);
-  }, [opened, opening, flipping, index, total, step, reduce, supports3d, completeNext]);
+    animateTo(0, 1, completeNext);
+  }, [opened, opening, flipping, index, step, total, reduce, completeNext, animateTo]);
 
   const goPrev = useCallback(() => {
     if (!opened || opening || flipping || index <= 0) return;
-    if (reduce || !supports3d) {
+    if (reduce) {
       completePrev();
       return;
     }
     setFlipping("prev");
     setFlipProgress(0);
-    const start = performance.now();
-    const dur = 680;
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / dur);
-      setFlipProgress(1 - Math.pow(1 - p, 3));
-      if (p < 1) animRef.current = requestAnimationFrame(tick);
-      else completePrev();
-    };
-    animRef.current = requestAnimationFrame(tick);
-  }, [opened, opening, flipping, index, reduce, supports3d, completePrev]);
-
-  const openBook = useCallback(() => {
-    if (opened || opening) return;
-    if (reduce) {
-      setOpened(true);
-      return;
-    }
-    setOpening(true);
-    window.setTimeout(() => {
-      setOpened(true);
-      setOpening(false);
-    }, 1100);
-  }, [opened, opening, reduce]);
+    animateTo(0, 1, completePrev);
+  }, [opened, opening, flipping, index, reduce, completePrev, animateTo]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
-        if (zoomIdx != null) {
-          setZoomIdx((z) => (z == null ? z : Math.min(total - 1, z + 1)));
-          return;
-        }
-        goNext();
+        if (zoomIdx != null) setZoomIdx((z) => (z == null ? z : Math.min(total - 1, z + 1)));
+        else goNext();
       }
       if (e.key === "ArrowLeft") {
-        if (zoomIdx != null) {
-          setZoomIdx((z) => (z == null ? z : Math.max(0, z - 1)));
-          return;
-        }
-        goPrev();
+        if (zoomIdx != null) setZoomIdx((z) => (z == null ? z : Math.max(0, z - 1)));
+        else goPrev();
       }
       if (e.key === "Escape") {
         if (zoomIdx != null) setZoomIdx(null);
@@ -336,20 +252,16 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
   };
 
   const onPointerMove = (e: ReactPointerEvent) => {
-    if (!dragging.current || dragStartX.current == null || opening) return;
+    if (!dragging.current || dragStartX.current == null || opening || reduce) return;
     const dx = e.clientX - dragStartX.current;
     const width = stageRef.current?.clientWidth || 400;
-    const p = Math.max(-1, Math.min(1, dx / (width * 0.42)));
-    if (reduce || !supports3d) return;
+    const p = Math.max(-1, Math.min(1, dx / (width * 0.4)));
     if (p < 0 && (canNext || flipping === "next")) {
       setFlipping("next");
       setFlipProgress(Math.abs(p));
     } else if (p > 0 && (canPrev || flipping === "prev")) {
       setFlipping("prev");
       setFlipProgress(Math.abs(p));
-    } else if (!dragging.current) {
-      setFlipping(null);
-      setFlipProgress(0);
     }
   };
 
@@ -358,10 +270,10 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
     dragging.current = false;
     dragStartX.current = null;
     if (!flipping) return;
-    if (flipProgress > 0.32) {
-      animateFlipTo(1, flipping === "next" ? completeNext : completePrev);
+    if (flipProgress > 0.28) {
+      animateTo(flipProgress, 1, flipping === "next" ? completeNext : completePrev);
     } else {
-      animateFlipTo(0, () => {
+      animateTo(flipProgress, 0, () => {
         setFlipping(null);
         setFlipProgress(0);
       });
@@ -374,8 +286,8 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
     if (!rect) return;
     const nx = (e.clientX - rect.left) / rect.width - 0.5;
     const ny = (e.clientY - rect.top) / rect.height - 0.5;
-    tiltY.set(nx * 5);
-    tiltX.set(-ny * 3.5);
+    tiltY.set(nx * 4);
+    tiltX.set(-ny * 3);
   };
 
   const onMouseLeave = () => {
@@ -383,21 +295,8 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
     tiltY.set(0);
   };
 
-  const bookW = compact
-    ? "min(420px, 88vw)"
-    : fullscreen
-      ? "min(1000px, 94vw)"
-      : "min(880px, 92vw)";
-  const bookH = compact
-    ? "min(300px, 56vw)"
-    : fullscreen
-      ? "min(640px, 74vh)"
-      : isMobile
-        ? "min(540px, 78vh)"
-        : "min(540px, 64vh)";
-
   const flipAngle = flipProgress * 180;
-  const shade = flipProgress * 0.35;
+  const shade = 0.15 + flipProgress * 0.45;
 
   const preloadUrls = useMemo(() => {
     const set = new Set<string>();
@@ -410,6 +309,17 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
 
   const zoomPage = zoomIdx != null ? pages[zoomIdx] : null;
 
+  const bookClass = [
+    "lookbook-book",
+    opened ? "is-open" : "is-closed",
+    opening ? "is-opening" : "",
+    compact ? "compact" : "",
+    isMobile && opened ? "mobile" : "",
+    fullscreen ? "fullscreen-book" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   if (total === 0) {
     return (
       <div className="rounded-xl border border-white/10 bg-black/40 p-10 text-center text-white/70">
@@ -420,7 +330,7 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
 
   return (
     <div
-      className={`lookbook-stage ${fullscreen ? "fixed inset-0 z-[90] flex flex-col bg-[#050507] px-4 py-6" : ""} ${className || ""}`}
+      className={`lookbook-stage ${fullscreen ? "fixed inset-0 z-[90] flex flex-col justify-center bg-[#050507] px-4 py-8" : ""} ${className || ""}`}
       style={{ ["--lb-accent" as string]: settings.accentColor }}
       role="region"
       aria-label="Angel Nails Lookbook"
@@ -437,224 +347,189 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
 
       <div
         ref={stageRef}
-        className="lookbook-scene relative z-10 mx-auto flex flex-col items-center"
+        className="lookbook-scene relative z-10 mx-auto flex flex-col items-center py-8"
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
       >
         <motion.div
-          className="lookbook-book"
-          style={{
-            width: bookW,
-            height: bookH,
-            rotateX: isMobile || !opened || opening ? 0 : springX,
-            rotateY: isMobile || !opened || opening ? 0 : springY,
-          }}
-          animate={
-            opening
-              ? { y: [0, -18, -8], rotateX: [8, 2, 0], scale: [1, 1.03, 1] }
-              : opened
-                ? { y: 0, rotateX: 0, scale: 1 }
-                : { y: 0, rotateX: 6, scale: 1 }
+          className={bookClass}
+          style={
+            opened && !opening && !isMobile
+              ? { rotateX: springX, rotateY: springY }
+              : undefined
           }
-          transition={{ duration: opening ? 1.1 : 0.45, ease: [0.22, 1, 0.36, 1] }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerUp}
         >
-          <div className="lookbook-shadow" style={{ opacity: opened ? 0.9 : 0.7 }} />
+          <div className="lookbook-floor-shadow" />
 
           {!opened ? (
-            <motion.button
+            <button
               type="button"
-              className="absolute inset-0 z-20 cursor-pointer"
-              style={{ transformStyle: "preserve-3d" }}
-              animate={
-                opening
-                  ? { rotateY: -155, x: "-18%" }
-                  : { rotateY: 0, x: 0 }
-              }
-              transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
+              className="lb-cover-wrap absolute inset-0 border-0 bg-transparent p-0"
               onClick={openBook}
               aria-label="Explore the Lookbook"
+              style={{
+                transformStyle: "preserve-3d",
+                transform: opening && !reduce ? "rotateY(-145deg)" : undefined,
+                transformOrigin: "left center",
+                transition: reduce ? "none" : "transform 1.05s cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
             >
-              <div className="lookbook-cover-thickness" />
-              <div className="lookbook-stack-edge right" />
-              <CoverFace
+              <div className="lb-spine-3d" />
+              <div className="lb-page-block" />
+              <div className="lb-top-edge" />
+              <CoverFront
                 title={settings.title}
                 subtitle={settings.subtitle}
                 coverImageUrl={settings.coverImageUrl}
                 accent={settings.accentColor}
               />
-            </motion.button>
-          ) : isMobile || !supports3d ? (
-            <div className="absolute inset-0 overflow-hidden rounded-sm">
-              <div className="lookbook-stack-edge right" />
+              <div className="lb-cover-back" />
+            </button>
+          ) : isMobile ? (
+            <div className="lb-open-stage">
+              <div className="lb-stack right" />
               <div
-                className="lookbook-page-face absolute inset-0"
+                className="lb-leaf single"
                 style={{
-                  transformOrigin: "left center",
+                  zIndex: 5,
                   transform:
-                    supports3d && flipping === "next"
+                    flipping === "next"
                       ? `rotateY(${-flipAngle}deg)`
-                      : supports3d && flipping === "prev"
+                      : flipping === "prev"
                         ? `rotateY(${flipAngle - 180}deg)`
-                        : "none",
-                  opacity: !supports3d && flipping ? 1 - flipProgress * 0.35 : 1,
-                  zIndex: 4,
-                  boxShadow: flipping
-                    ? `${flipping === "next" ? -18 : 18}px 0 36px rgba(0,0,0,${0.22 + flipProgress * 0.28})`
-                    : undefined,
-                  transition: reduce ? "none" : undefined,
+                        : "rotateY(0deg)",
+                  filter: flipping ? `brightness(${1 - flipProgress * 0.15})` : undefined,
                 }}
               >
-                {singlePage && (
-                  <PageContent
-                    page={singlePage}
-                    treatwellUrl={treatwellUrl}
-                    onZoom={() => setZoomIdx(index)}
-                    priority
-                  />
-                )}
-                {flipping && (
-                  <div
-                    className="lookbook-flip-shade"
-                    style={{
-                      background: `linear-gradient(${flipping === "next" ? "90deg" : "270deg"}, rgba(0,0,0,${shade}), transparent 55%)`,
-                    }}
-                  />
-                )}
-              </div>
-              <div className="lookbook-page-face absolute inset-0" style={{ zIndex: 1 }}>
-                {pages[
-                  flipping === "next" ? index + 1 : flipping === "prev" ? index - 1 : index
-                ] && (
-                  <PageContent
-                    page={
-                      pages[
-                        flipping === "next" ? index + 1 : flipping === "prev" ? index - 1 : index
-                      ]
-                    }
-                    treatwellUrl={treatwellUrl}
-                    onZoom={() => {}}
-                  />
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
-              <div className="lookbook-spine" />
-              <div className="lookbook-stack-edge left" />
-              <div className="lookbook-stack-edge right" />
-
-              {/* Stable left page */}
-              <div
-                className="lookbook-leaf left"
-                style={{
-                  zIndex: flipping === "prev" ? 2 : 3,
-                  transform: flipping === "prev" ? `rotateY(${flipAngle}deg)` : "rotateY(0deg)",
-                }}
-              >
-                <div className="lookbook-leaf-face front border-r border-black/5">
-                  {flipping === "prev" && prevLeft ? (
-                    <PageContent
-                      page={prevLeft}
-                      treatwellUrl={treatwellUrl}
-                      onZoom={() => setZoomIdx(index - 2)}
+                <div className="lb-face">
+                  {singlePage && (
+                    <PhotoPage
+                      page={singlePage}
+                      priority
+                      onZoom={() => setZoomIdx(index)}
+                      gutter="right"
                     />
-                  ) : (
-                    leftPage && (
-                      <PageContent
-                        page={leftPage}
-                        treatwellUrl={treatwellUrl}
-                        onZoom={() => setZoomIdx(index)}
-                        priority
-                      />
-                    )
                   )}
-                  {flipping === "prev" && (
+                  {flipping && (
                     <div
-                      className="lookbook-flip-shade"
+                      className="lb-flip-shade"
                       style={{
-                        background: `linear-gradient(270deg, rgba(0,0,0,${shade}), transparent 60%)`,
+                        background: `linear-gradient(${flipping === "next" ? "90deg" : "270deg"}, rgba(0,0,0,${shade}), transparent 60%)`,
                       }}
                     />
                   )}
                 </div>
-                <div className="lookbook-leaf-face back">
-                  <PaperBack />
+                <div className="lb-face back paper-back" />
+              </div>
+              <div className="lb-leaf single" style={{ zIndex: 1 }}>
+                <div className="lb-face">
+                  {pages[flipping === "next" ? index + 1 : flipping === "prev" ? index - 1 : index] && (
+                    <PhotoPage
+                      page={
+                        pages[
+                          flipping === "next" ? index + 1 : flipping === "prev" ? index - 1 : index
+                        ]
+                      }
+                      gutter="right"
+                    />
+                  )}
                 </div>
               </div>
+            </div>
+          ) : (
+            <div className="lb-open-stage">
+              <div className="lb-open-spine" />
+              <div className="lb-stack left" />
+              <div className="lb-stack right" />
 
-              {/* Right page — primary flip leaf */}
+              {/* Left page */}
               <div
-                className="lookbook-leaf right"
+                className="lb-leaf left"
                 style={{
-                  zIndex: flipping === "next" ? 7 : 4,
+                  zIndex: flipping === "prev" ? 8 : 3,
+                  transform: flipping === "prev" ? `rotateY(${flipAngle}deg)` : "rotateY(0deg)",
+                }}
+              >
+                <div className="lb-face">
+                  {leftPage && (
+                    <PhotoPage
+                      page={leftPage}
+                      priority
+                      onZoom={() => setZoomIdx(index)}
+                      gutter="left"
+                    />
+                  )}
+                  {flipping === "prev" && (
+                    <div
+                      className="lb-flip-shade"
+                      style={{
+                        background: `linear-gradient(270deg, rgba(0,0,0,${shade}), transparent 55%)`,
+                      }}
+                    />
+                  )}
+                </div>
+                <div className="lb-face back paper-back" />
+              </div>
+
+              {/* Right flipping leaf */}
+              <div
+                className="lb-leaf right"
+                style={{
+                  zIndex: flipping === "next" ? 9 : 4,
                   transform: flipping === "next" ? `rotateY(${-flipAngle}deg)` : "rotateY(0deg)",
                   filter:
                     flipping === "next"
-                      ? `brightness(${1 - flipProgress * 0.12})`
+                      ? `brightness(${1 - flipProgress * 0.18})`
                       : undefined,
                 }}
               >
-                <div className="lookbook-leaf-face front border-l border-black/5">
+                <div className="lb-face">
                   {rightPage ? (
-                    <PageContent
+                    <PhotoPage
                       page={rightPage}
-                      treatwellUrl={treatwellUrl}
-                      onZoom={() => setZoomIdx(index + 1)}
                       priority
+                      onZoom={() => setZoomIdx(index + 1)}
+                      gutter="right"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-black/40">
-                      Τέλος lookbook
+                    <div className="flex h-full items-center justify-center bg-[#ebe4da] text-sm text-black/35">
+                      —
                     </div>
                   )}
                   {flipping === "next" && (
                     <div
-                      className="lookbook-flip-shade"
+                      className="lb-flip-shade"
                       style={{
                         background: `linear-gradient(90deg, rgba(0,0,0,${shade}), transparent 55%)`,
                       }}
                     />
                   )}
                 </div>
-                <div className="lookbook-leaf-face back">
-                  {nextRight ? (
-                    <PageContent
-                      page={nextRight}
-                      treatwellUrl={treatwellUrl}
-                      onZoom={() => {}}
-                    />
+                <div className="lb-face back">
+                  {pages[index + 2] ? (
+                    <PhotoPage page={pages[index + 2]} gutter="left" />
                   ) : (
-                    <PaperBack />
+                    <div className="absolute inset-0 bg-[#ebe4da]" />
                   )}
                 </div>
               </div>
 
-              {/* Under-sheet revealed during next flip */}
-              {flipping === "next" && nextRight && (
-                <div className="lookbook-leaf right" style={{ zIndex: 1 }}>
-                  <div className="lookbook-leaf-face front">
-                    <PageContent
-                      page={nextRight}
-                      treatwellUrl={treatwellUrl}
-                      onZoom={() => {}}
-                    />
+              {/* Sheet under right leaf */}
+              {flipping === "next" && pages[index + 3] && (
+                <div className="lb-leaf right" style={{ zIndex: 1 }}>
+                  <div className="lb-face">
+                    <PhotoPage page={pages[index + 3]} gutter="right" />
                   </div>
                 </div>
               )}
-
-              {/* Under left when flipping prev */}
-              {flipping === "prev" && leftPage && (
-                <div className="lookbook-leaf left" style={{ zIndex: 1 }}>
-                  <div className="lookbook-leaf-face front">
-                    <PageContent
-                      page={pages[index - 2] ? leftPage : leftPage}
-                      treatwellUrl={treatwellUrl}
-                      onZoom={() => {}}
-                    />
+              {flipping === "next" && !pages[index + 3] && pages[index + 2] && (
+                <div className="lb-leaf right" style={{ zIndex: 1 }}>
+                  <div className="lb-face">
+                    <div className="absolute inset-0 bg-[#ebe4da]" />
                   </div>
                 </div>
               )}
@@ -662,11 +537,38 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
           )}
         </motion.div>
 
+        {/* Caption outside the book — never on the page */}
+        {opened && !opening && activeCaption && (
+          <div className="relative z-[80] mt-10 max-w-lg px-4 text-center">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#FF3F87]">
+              {activeCaption.category}
+            </p>
+            <p
+              className="mt-2 text-2xl text-white"
+              style={{ fontFamily: "var(--font-cormorant), Georgia, serif" }}
+            >
+              {activeCaption.title}
+            </p>
+            {activeCaption.description && (
+              <p className="mt-2 text-sm text-white/55">{activeCaption.description}</p>
+            )}
+            <a
+              href={treatwellUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex min-h-10 items-center rounded-md bg-[#ED2F78] px-4 text-xs font-semibold"
+              style={{ color: "#FFFFFF" }}
+            >
+              Κλείσε Ραντεβού
+            </a>
+          </div>
+        )}
+
         {!opened && !opening && (
           <button
             type="button"
             onClick={openBook}
-            className="relative z-20 mt-8 inline-flex min-h-12 items-center justify-center rounded-md bg-[#ED2F78] px-6 text-sm font-semibold tracking-wide"
+            className="relative z-[80] mt-12 inline-flex min-h-12 items-center justify-center rounded-md bg-[#ED2F78] px-6 text-sm font-semibold tracking-wide"
             style={{ color: "#FFFFFF" }}
           >
             EXPLORE THE LOOKBOOK
@@ -688,7 +590,7 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
               <ChevronLeft size={16} /> Previous
             </button>
             <p className="text-xs font-medium tracking-[0.18em] text-white/70" aria-live="polite">
-              Page {pageLabel}
+              {pageLabel}
             </p>
             <button
               type="button"
@@ -705,7 +607,7 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
           </div>
         )}
 
-        {opened && !opening && (
+        {opened && !opening && !compact && (
           <div className="relative z-[80] mt-4 flex gap-2">
             <button
               type="button"
@@ -722,7 +624,7 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
       <AnimatePresence>
         {zoomPage && zoomIdx != null && (
           <motion.div
-            className="fixed inset-0 z-[110] flex items-center justify-center bg-black/92 p-4"
+            className="fixed inset-0 z-[110] flex items-center justify-center bg-black/94 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -763,10 +665,7 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
             >
               <ChevronRight />
             </button>
-            <div
-              className="relative h-[80vh] w-full max-w-4xl"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="relative h-[82vh] w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
               <Image
                 src={zoomPage.imageUrl}
                 alt={zoomPage.altText || zoomPage.title}
@@ -776,9 +675,6 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
                 priority
               />
             </div>
-            <p className="absolute bottom-6 left-0 right-0 text-center text-sm text-white/70">
-              {zoomPage.title}
-            </p>
           </motion.div>
         )}
       </AnimatePresence>
