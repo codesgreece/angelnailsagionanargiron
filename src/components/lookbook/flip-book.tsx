@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { PageFlip } from "page-flip";
-import type { LookbookData } from "@/lib/lookbook/types";
+import type { LookbookData, LookbookPage } from "@/lib/lookbook/types";
 import "./lookbook.css";
 
 type Props = {
@@ -12,15 +11,23 @@ type Props = {
   className?: string;
 };
 
+type Anim = {
+  dir: "next" | "prev";
+  from: number;
+  to: number;
+};
+
+/**
+ * Custom CSS 3D lookbook — no StPageFlip.
+ * Prev/next are driven by React state so pages never vanish mid-flip.
+ */
 export function FlipBook({ data, compact = false, className }: Props) {
   const { settings, pages } = data;
-  const hostRef = useRef<HTMLDivElement>(null);
-  const flipRef = useRef<PageFlip | null>(null);
-  const busyRef = useRef(false);
-  const pageIndexRef = useRef(0);
+  const stageRef = useRef<HTMLDivElement>(null);
   const [pageIndex, setPageIndex] = useState(0);
-  const [ready, setReady] = useState(false);
+  const [anim, setAnim] = useState<Anim | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const animLock = useRef(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
@@ -32,137 +39,45 @@ export function FlipBook({ data, compact = false, className }: Props) {
 
   const total = pages.length;
 
-  const pageLabel = useMemo(() => {
-    if (total === 0) return "00 / 00";
-    if (isMobile) {
-      return `${String(pageIndex + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
-    }
-    const end = Math.min(pageIndex + 2, total);
-    return `${String(pageIndex + 1).padStart(2, "0")}–${String(end).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
-  }, [isMobile, pageIndex, total]);
-
-  const active = pages[pageIndex] || pages[0];
-
   const dims = useMemo(() => {
     if (compact) {
-      return isMobile ? { w: 220, h: 310 } : { w: 250, h: 350 };
+      return isMobile ? { w: 220, h: 310 } : { w: 260, h: 364 };
     }
-    return isMobile ? { w: 240, h: 340 } : { w: 300, h: 420 };
+    return isMobile ? { w: 250, h: 350 } : { w: 320, h: 448 };
   }, [compact, isMobile]);
 
-  useEffect(() => {
-    pageIndexRef.current = pageIndex;
-  }, [pageIndex]);
+  const pageLabel = useMemo(() => {
+    if (total === 0) return "00 / 00";
+    return `${String(pageIndex + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
+  }, [pageIndex, total]);
 
-  useEffect(() => {
-    const host = hostRef.current;
-    if (!host || total === 0) return;
+  const active = pages[pageIndex] || pages[0];
+  const busy = anim !== null;
 
-    // PageFlip MUST sit in a flat, non-transformed parent or pages vanish mid-flip.
-    const root = document.createElement("div");
-    root.className = "lookbook-stf-root";
-    host.replaceChildren(root);
-
-    for (const page of pages) {
-      const leaf = document.createElement("div");
-      leaf.className = "lookbook-stf-page";
-      leaf.dataset.density = "soft";
-      const img = document.createElement("img");
-      img.src = page.imageUrl;
-      img.alt = page.altText || page.title;
-      img.draggable = false;
-      img.decoding = "async";
-      leaf.appendChild(img);
-      root.appendChild(leaf);
-    }
-
-    const flip = new PageFlip(root, {
-      width: dims.w,
-      height: dims.h,
-      size: "fixed",
-      minWidth: dims.w,
-      maxWidth: dims.w,
-      minHeight: dims.h,
-      maxHeight: dims.h,
-      drawShadow: true,
-      flippingTime: 1000,
-      usePortrait: true,
-      startZIndex: 1,
-      autoSize: false,
-      maxShadowOpacity: 0.7,
-      showCover: false,
-      mobileScrollSupport: false,
-      swipeDistance: 40,
-      clickEventForward: false,
-      // Library swipe-prev is buggy in portrait; we handle gestures ourselves.
-      useMouseEvents: false,
-      showPageCorners: false,
-      disableFlipByClick: true,
-      startPage: 0,
-    });
-
-    flip.loadFromHTML(root.querySelectorAll(".lookbook-stf-page"));
-
-    flip.on("flip", (e) => {
-      busyRef.current = false;
-      if (typeof e.data === "number") {
-        pageIndexRef.current = e.data;
-        setPageIndex(e.data);
-      }
-    });
-    flip.on("changeState", (e) => {
-      const state = String(e.data);
-      busyRef.current = state === "flipping" || state === "user_fold";
-    });
-    flip.on("init", (e) => {
-      const d = e.data;
-      const idx = typeof d === "object" && d ? d.page : 0;
-      pageIndexRef.current = idx;
-      setPageIndex(idx);
-      setReady(true);
-      busyRef.current = false;
-    });
-
-    flipRef.current = flip;
-
-    return () => {
-      flipRef.current = null;
-      setReady(false);
-      busyRef.current = false;
-      try {
-        flip.destroy();
-      } catch {
-        // ignore
-      }
-      host.replaceChildren();
-    };
-  }, [dims.h, dims.w, pages, total]);
+  const finishAnim = useCallback((next: Anim) => {
+    if (!animLock.current) return;
+    animLock.current = false;
+    setPageIndex(next.to);
+    setAnim(null);
+  }, []);
 
   const goNext = useCallback(() => {
-    const flip = flipRef.current;
-    if (!flip || !ready || busyRef.current) return;
-    if (pageIndexRef.current >= total - 1) return;
-    busyRef.current = true;
-    flip.flipNext("top");
-    window.setTimeout(() => {
-      busyRef.current = false;
-    }, 1100);
-  }, [ready, total]);
+    if (animLock.current || busy) return;
+    if (pageIndex >= total - 1) return;
+    animLock.current = true;
+    setAnim({ dir: "next", from: pageIndex, to: pageIndex + 1 });
+  }, [busy, pageIndex, total]);
 
   const goPrev = useCallback(() => {
-    const flip = flipRef.current;
-    if (!flip || !ready || busyRef.current) return;
-    if (pageIndexRef.current <= 0) return;
-    busyRef.current = true;
-    flip.flip(pageIndexRef.current - 1, "top");
-    window.setTimeout(() => {
-      busyRef.current = false;
-    }, 1100);
-  }, [ready]);
+    if (animLock.current || busy) return;
+    if (pageIndex <= 0) return;
+    animLock.current = true;
+    setAnim({ dir: "prev", from: pageIndex, to: pageIndex - 1 });
+  }, [busy, pageIndex]);
 
-  // Reliable swipe — avoids broken library flipPrev in portrait mode
+  // Swipe on the book surface
   useEffect(() => {
-    const host = hostRef.current;
+    const host = stageRef.current;
     if (!host) return;
     let startX: number | null = null;
     let startY: number | null = null;
@@ -180,8 +95,8 @@ export function FlipBook({ data, compact = false, className }: Props) {
       const dt = Date.now() - startT;
       startX = null;
       startY = null;
-      if (dt > 600) return;
-      if (Math.abs(dx) < 36 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      if (dt > 700) return;
+      if (Math.abs(dx) < 34 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
       if (dx < 0) goNext();
       else goPrev();
     };
@@ -196,7 +111,7 @@ export function FlipBook({ data, compact = false, className }: Props) {
       host.removeEventListener("pointerdown", onDown);
       host.removeEventListener("pointerup", onUp);
     };
-  }, [goNext, goPrev, ready]);
+  }, [goNext, goPrev]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -207,8 +122,26 @@ export function FlipBook({ data, compact = false, className }: Props) {
     return () => window.removeEventListener("keydown", onKey);
   }, [goNext, goPrev]);
 
-  const canPrev = pageIndex > 0;
-  const canNext = pageIndex < total - 1;
+  // Prefetch neighbors so flips never flash empty
+  useEffect(() => {
+    const urls = [pages[pageIndex - 1]?.imageUrl, pages[pageIndex + 1]?.imageUrl].filter(
+      Boolean,
+    ) as string[];
+    urls.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [pageIndex, pages]);
+
+  // Safety: never leave animation hanging
+  useEffect(() => {
+    if (!anim) return;
+    const t = window.setTimeout(() => finishAnim(anim), 950);
+    return () => window.clearTimeout(t);
+  }, [anim, finishAnim]);
+
+  const canPrev = pageIndex > 0 && !busy;
+  const canNext = pageIndex < total - 1 && !busy;
 
   if (total === 0) {
     return (
@@ -217,6 +150,20 @@ export function FlipBook({ data, compact = false, className }: Props) {
       </div>
     );
   }
+
+  const underPage: LookbookPage | null = anim
+    ? anim.dir === "next"
+      ? pages[anim.to]
+      : pages[anim.from]
+    : null;
+
+  const flipPage: LookbookPage | null = anim
+    ? anim.dir === "next"
+      ? pages[anim.from]
+      : pages[anim.to]
+    : null;
+
+  const idlePage = !anim ? pages[pageIndex] : null;
 
   return (
     <div
@@ -237,12 +184,48 @@ export function FlipBook({ data, compact = false, className }: Props) {
         >
           <div className="lookbook-floor-shadow" />
 
-          {/* Decorative hardcover frame — NO transforms on the flip host */}
-          <div className="lookbook-frame">
+          <div ref={stageRef} className="lookbook-frame">
             <span className="lookbook-frame-spine" aria-hidden />
             <span className="lookbook-frame-stack" aria-hidden />
             <span className="lookbook-frame-board" aria-hidden />
-            <div ref={hostRef} className="lookbook-stf-host" />
+
+            <div className="lookbook-viewport" style={{ width: dims.w, height: dims.h }}>
+              {/* Page stack edge (physical feel) */}
+              <div className="lookbook-page-stack" aria-hidden />
+
+              {/* Under page during animation */}
+              {underPage && (
+                <div className="lookbook-leaf is-under">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={underPage.imageUrl} alt={underPage.altText || underPage.title} draggable={false} />
+                </div>
+              )}
+
+              {/* Idle current page */}
+              {idlePage && (
+                <div className="lookbook-leaf is-current">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={idlePage.imageUrl} alt={idlePage.altText || idlePage.title} draggable={false} />
+                </div>
+              )}
+
+              {/* Animated flipping leaf */}
+              {flipPage && anim && (
+                <div
+                  className={`lookbook-leaf is-flip is-flip-${anim.dir}`}
+                  onAnimationEnd={() => finishAnim(anim)}
+                >
+                  <div className="lookbook-leaf-face lookbook-leaf-front">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={flipPage.imageUrl} alt="" draggable={false} />
+                    <span className="lookbook-curl-shade" aria-hidden />
+                  </div>
+                  <div className="lookbook-leaf-face lookbook-leaf-back" aria-hidden>
+                    <div className="lookbook-paper-back" />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -264,7 +247,7 @@ export function FlipBook({ data, compact = false, className }: Props) {
           <button
             type="button"
             onClick={goPrev}
-            disabled={!ready || !canPrev}
+            disabled={!canPrev}
             className="inline-flex items-center gap-1 rounded-md border border-white/20 px-3 py-2 text-sm text-white disabled:opacity-30"
             aria-label="Previous page"
           >
@@ -276,7 +259,7 @@ export function FlipBook({ data, compact = false, className }: Props) {
           <button
             type="button"
             onClick={goNext}
-            disabled={!ready || !canNext}
+            disabled={!canNext}
             className="inline-flex items-center gap-1 rounded-md border border-white/20 px-3 py-2 text-sm text-white disabled:opacity-30"
             aria-label="Next page"
           >

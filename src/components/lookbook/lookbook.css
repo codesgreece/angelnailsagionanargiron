@@ -1,7 +1,7 @@
 .lookbook-stage {
   --lb-accent: #ed2f78;
-  --book-w: 240px;
-  --book-h: 340px;
+  --book-w: 250px;
+  --book-h: 350px;
   position: relative;
   isolation: isolate;
   min-height: 380px;
@@ -40,26 +40,18 @@
   z-index: 0;
 }
 
-.lookbook-book-shell.is-desktop .lookbook-floor-shadow {
-  width: calc(var(--book-w) * 2 + 64px);
-}
-
-/* Flat frame — never apply rotateX/Y to this or the flip host */
 .lookbook-frame {
   position: relative;
   z-index: 2;
   width: var(--book-w);
   height: var(--book-h);
-  padding: 0;
-}
-
-.lookbook-book-shell.is-desktop .lookbook-frame {
-  width: calc(var(--book-w) * 2);
+  touch-action: pan-y;
+  user-select: none;
 }
 
 .lookbook-frame-board {
   position: absolute;
-  inset: -5px -7px -5px -9px;
+  inset: -6px -8px -6px -10px;
   border-radius: 2px 4px 4px 2px;
   background:
     radial-gradient(ellipse at 28% 18%, rgba(237, 47, 120, 0.16), transparent 52%),
@@ -75,7 +67,7 @@
   position: absolute;
   top: -3px;
   bottom: -3px;
-  left: -11px;
+  left: -12px;
   width: 13px;
   border-radius: 2px 0 0 2px;
   background: linear-gradient(180deg, #1c1c22, #050507 45%, #15151a);
@@ -86,19 +78,11 @@
   pointer-events: none;
 }
 
-.lookbook-book-shell.is-desktop .lookbook-frame-spine {
-  left: calc(50% - 5px);
-  width: 10px;
-  background: linear-gradient(90deg, #050507, #1e1e24 45%, #08080a);
-  box-shadow: 0 0 14px rgba(0, 0, 0, 0.5);
-  z-index: 6;
-}
-
 .lookbook-frame-stack {
   position: absolute;
   top: 2.5%;
   bottom: 2.5%;
-  right: -10px;
+  right: -11px;
   width: 11px;
   background: repeating-linear-gradient(
     to right,
@@ -111,32 +95,51 @@
   pointer-events: none;
 }
 
-.lookbook-stf-host {
+.lookbook-viewport {
   position: relative;
-  width: 100%;
-  height: 100%;
   z-index: 4;
   overflow: visible;
-  /* Critical: keep this transform-free for StPageFlip */
-  transform: none !important;
-}
-
-.lookbook-stf-root {
-  width: 100%;
-  height: 100%;
-}
-
-.lookbook-stf-root.stf__parent,
-.lookbook-stf-host .stf__parent {
-  margin: 0 auto !important;
-}
-
-.lookbook-stf-page {
+  border-radius: 1px;
   background: #0c0c0e;
-  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  perspective: 2200px;
+  transform-style: preserve-3d;
 }
 
-.lookbook-stf-page img {
+.lookbook-page-stack {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: -7px;
+  bottom: 0;
+  width: 7px;
+  background: repeating-linear-gradient(
+    to right,
+    #efe6db 0 1px,
+    #d5ccc0 1px 2px
+  );
+  border-radius: 0 1px 1px 0;
+  z-index: 1;
+  opacity: 0.95;
+}
+
+.lookbook-leaf {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.lookbook-leaf.is-under,
+.lookbook-leaf.is-current {
+  z-index: 2;
+}
+
+.lookbook-leaf.is-flip {
+  z-index: 5;
+}
+
+.lookbook-leaf img {
   display: block;
   width: 100%;
   height: 100%;
@@ -146,18 +149,110 @@
   -webkit-user-drag: none;
 }
 
-/* Ensure flipping pages stay visible above the board */
-.lookbook-stf-host .stf__block {
-  overflow: visible !important;
+.lookbook-leaf-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
 }
 
-.lookbook-stf-host .stf__item {
-  background: #111;
+.lookbook-leaf-front {
+  z-index: 2;
 }
 
-.lookbook-stf-host .stf__outerShadow,
-.lookbook-stf-host .stf__innerShadow,
-.lookbook-stf-host .stf__hardShadow,
-.lookbook-stf-host .stf__hardInnerShadow {
+.lookbook-leaf-back {
+  z-index: 1;
+  transform: rotateY(180deg);
+}
+
+.lookbook-paper-back {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.12), transparent 18%),
+    linear-gradient(155deg, #f4eee6, #e7dfd4 55%, #d9d0c4);
+}
+
+.lookbook-curl-shade {
   pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0) 40%,
+    rgba(0, 0, 0, 0.18) 72%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  opacity: 0;
+  mix-blend-mode: multiply;
+}
+
+/* Forward flip — peel from the right, hinge on the left (spine) */
+.lookbook-leaf.is-flip-next {
+  transform-origin: left center;
+  animation: lb-flip-next 0.85s cubic-bezier(0.22, 0.8, 0.28, 1) forwards;
+}
+
+.lookbook-leaf.is-flip-next .lookbook-curl-shade {
+  animation: lb-shade-next 0.85s ease forwards;
+}
+
+@keyframes lb-flip-next {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(-178deg);
+  }
+}
+
+@keyframes lb-shade-next {
+  0% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0.15;
+  }
+}
+
+/* Back flip — previous page swings in from the left */
+.lookbook-leaf.is-flip-prev {
+  transform-origin: left center;
+  animation: lb-flip-prev 0.85s cubic-bezier(0.22, 0.8, 0.28, 1) forwards;
+}
+
+.lookbook-leaf.is-flip-prev .lookbook-curl-shade {
+  animation: lb-shade-prev 0.85s ease forwards;
+}
+
+@keyframes lb-flip-prev {
+  0% {
+    transform: rotateY(-178deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes lb-shade-prev {
+  0% {
+    opacity: 0.2;
+  }
+  55% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lookbook-leaf.is-flip-next,
+  .lookbook-leaf.is-flip-prev {
+    animation-duration: 0.01ms;
+  }
 }
