@@ -67,6 +67,7 @@ const NAV = [
     children: [
       { href: "/admin/appearance", label: "Brand & Colors" },
       { href: "/admin/appearance/logo", label: "Logo / Hero" },
+      { href: "/admin/appearance/intro", label: "Intro Animation" },
     ],
   },
   { href: "/admin/seo", label: "SEO", icon: Search },

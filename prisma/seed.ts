@@ -605,6 +605,25 @@ async function main() {
     },
   });
 
+  await prisma.introSettings.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
+      id: "default",
+      enabled: true,
+      style: "angel-reveal",
+      playFrequency: "session",
+      durationMs: 3200,
+      showSkip: true,
+      showSubtitle: true,
+      showLoading: true,
+      showPetals: true,
+      showParticles: true,
+      qualityMode: "auto",
+      mobileQuality: "low",
+    },
+  });
+
   const legal = [
     {
       slug: "privacy-policy",

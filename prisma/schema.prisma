@@ -161,6 +161,22 @@ model LookbookSettings {
   updatedAt       DateTime @updatedAt
 }
 
+model IntroSettings {
+  id              String   @id @default("default")
+  enabled         Boolean  @default(true)
+  style           String   @default("angel-reveal")
+  playFrequency   String   @default("session")
+  durationMs      Int      @default(3200)
+  showSkip        Boolean  @default(true)
+  showSubtitle    Boolean  @default(true)
+  showLoading     Boolean  @default(true)
+  showPetals      Boolean  @default(true)
+  showParticles   Boolean  @default(true)
+  qualityMode     String   @default("auto")
+  mobileQuality    String   @default("low")
+  updatedAt       DateTime @updatedAt
+}
+
 model TeamMember {
   id           String   @id @default(cuid())
   name         String
