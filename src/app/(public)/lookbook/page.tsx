@@ -20,7 +20,7 @@ export default async function LookbookPage() {
   const data = await getLookbookData();
 
   return (
-    <div className="min-h-screen bg-[#050507] pb-28 pt-24 text-white md:pb-16">
+    <div className="min-h-screen bg-[#050507] pb-36 pt-24 text-white md:pb-24">
       <div className="mx-auto max-w-5xl px-4 text-center md:px-6">
         <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#FF3F87]">Lookbook</p>
         <h1

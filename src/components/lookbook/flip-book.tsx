@@ -201,9 +201,14 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
 
   const total = pages.length;
   const step = isMobile ? 1 : 2;
-  const pageLabel = total === 0 ? "0 / 0" : `${Math.min(index + 1, total)} / ${total}`;
+  const pageLabel =
+    total === 0
+      ? "0 / 0"
+      : isMobile
+        ? `${String(index + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`
+        : `${String(index + 1).padStart(2, "0")}–${String(Math.min(index + 2, total)).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
   const canPrev = opened && !opening && index > 0 && !flipping;
-  const canNext = opened && !opening && index < total - step && !flipping;
+  const canNext = opened && !opening && index + step < total && !flipping;
 
   const leftPage = pages[index] || null;
   const rightPage = pages[index + 1] || null;
@@ -247,7 +252,7 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
   }, [step]);
 
   const goNext = useCallback(() => {
-    if (!opened || opening || flipping || index >= total - step) return;
+    if (!opened || opening || flipping || index + step >= total) return;
     if (reduce || !supports3d) {
       completeNext();
       return;
@@ -300,12 +305,18 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
-        if (zoomIdx != null) setZoomIdx((z) => (z == null ? z : Math.min(total - 1, z + 1)));
-        else goNext();
+        if (zoomIdx != null) {
+          setZoomIdx((z) => (z == null ? z : Math.min(total - 1, z + 1)));
+          return;
+        }
+        goNext();
       }
       if (e.key === "ArrowLeft") {
-        if (zoomIdx != null) setZoomIdx((z) => (z == null ? z : Math.max(0, z - 1)));
-        else goPrev();
+        if (zoomIdx != null) {
+          setZoomIdx((z) => (z == null ? z : Math.max(0, z - 1)));
+          return;
+        }
+        goPrev();
       }
       if (e.key === "Escape") {
         if (zoomIdx != null) setZoomIdx(null);
@@ -663,10 +674,13 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
         )}
 
         {opened && !opening && (
-          <div className="relative z-20 mt-8 flex w-full max-w-md items-center justify-between gap-3 px-2">
+          <div className="relative z-[80] mt-8 flex w-full max-w-md items-center justify-between gap-3 px-2">
             <button
               type="button"
-              onClick={goPrev}
+              onClick={(e) => {
+                e.stopPropagation();
+                goPrev();
+              }}
               disabled={!canPrev}
               className="inline-flex items-center gap-1 rounded-md border border-white/20 px-3 py-2 text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ED2F78] disabled:opacity-30"
               aria-label="Previous page"
@@ -678,7 +692,10 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
             </p>
             <button
               type="button"
-              onClick={goNext}
+              onClick={(e) => {
+                e.stopPropagation();
+                goNext();
+              }}
               disabled={!canNext}
               className="inline-flex items-center gap-1 rounded-md border border-white/20 px-3 py-2 text-sm text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ED2F78] disabled:opacity-30"
               aria-label="Next page"
@@ -689,7 +706,7 @@ export function FlipBook({ data, autoOpen = false, compact = false, className }:
         )}
 
         {opened && !opening && (
-          <div className="relative z-20 mt-4 flex gap-2">
+          <div className="relative z-[80] mt-4 flex gap-2">
             <button
               type="button"
               onClick={() => setFullscreen((v) => !v)}
