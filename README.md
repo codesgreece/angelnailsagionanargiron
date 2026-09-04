@@ -35,6 +35,24 @@ npm run dev
 - URL: `/admin`
 - Seed credentials come from `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`
 
-## Booking
+## Production (Vercel)
 
-All booking CTAs open the Treatwell URL configured in Admin → Business → Treatwell.
+Project is linked and deployed to:
+
+https://angelnailsagionanargiron.vercel.app
+
+1. Create a PostgreSQL database (Neon / Vercel Postgres / Railway / etc.)
+2. In Vercel → Project → Settings → Environment Variables set:
+   - `DATABASE_URL`
+   - `AUTH_SECRET` (long random string)
+   - `ADMIN_EMAIL`
+   - `ADMIN_PASSWORD`
+   - `NEXT_PUBLIC_SITE_URL` (your public domain)
+3. Redeploy, then run against production DB:
+
+```bash
+DATABASE_URL="..." npx prisma migrate deploy
+DATABASE_URL="..." npm run db:seed
+```
+
+Booking CTAs always open the Treatwell URL from Admin → Business → Treatwell.
