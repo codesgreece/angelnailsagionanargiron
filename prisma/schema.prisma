@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  role         String     @default("admin")
+  active       Boolean    @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+  sessions     Session[]
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  ip        String?
+  userAgent String?
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model SiteSettings {
+  id              String   @id @default("default")
+  brandName       String   @default("Angel Nails")
+  tagline         String   @default("ΜΑΝΙΚΙΟΥΡ • ΠΕΝΤΙΚΙΟΥΡ • ΤΕΧΝΗΤΑ ΝΥΧΙΑ")
+  phonePrimary    String   @default("2102625122")
+  phoneSecondary  String   @default("6948384776")
+  email           String   @default("angelnails.ag@gmail.com")
+  addressLine1    String   @default("Ηρώων Πολυτεχνείου 25")
+  addressLine2    String   @default("Άγιοι Ανάργυροι")
+  city            String   @default("Άγιοι Ανάργυροι")
+  region          String   @default("Αττική")
+  postalCode      String   @default("13561")
+  country         String   @default("Greece")
+  treatwellUrl    String   @default("https://www.treatwell.gr/katasthma/angel-nails-16/")
+  mapEmbedUrl     String   @default("https://www.google.com/maps?q=%CE%97%CF%81%CF%8E%CF%89%CE%BD+%CE%A0%CE%BF%CE%BB%CF%85%CF%84%CE%B5%CF%87%CE%BD%CE%B5%CE%AF%CE%BF%CF%85+25,+%CE%86%CE%B3%CE%B9%CE%BF%CE%B9+%CE%91%CE%BD%CE%AC%CF%81%CE%B3%CF%85%CF%81%CE%BF%CE%B9&output=embed")
+  latitude        Float    @default(38.02831846)
+  longitude       Float    @default(23.71743857)
+  logoUrl         String?
+  faviconUrl      String?
+  heroImageUrl    String?
+  primaryColor    String   @default("#09090B")
+  secondaryColor  String   @default("#17171A")
+  accentColor     String   @default("#ED2F78")
+  brightPink      String   @default("#FF3F87")
+  backgroundColor String   @default("#FFFFFF")
+  softWhite       String   @default("#F7F6F4")
+  warmGrey        String   @default("#D8D5D2")
+  marbleGrey      String   @default("#BDB9B6")
+  textColor       String   @default("#09090B")
+  fontDisplay     String   @default("Cormorant Garamond")
+  fontSans        String   @default("DM Sans")
+  analyticsId     String?
+  analyticsEnabled Boolean @default(false)
+  cookieBannerEnabled Boolean @default(true)
+  updatedAt       DateTime @updatedAt
+}
+
+model PageContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String?
+  subtitle  String?
+  body      String?
+  ctaLabel  String?
+  ctaHref   String?
+  imageUrl  String?
+  extraJson String?
+  updatedAt DateTime @updatedAt
+}
+
+model ServiceCategory {
+  id           String    @id @default(cuid())
+  name         String
+  slug         String    @unique
+  description  String?
+  filterGroup  String?
+  displayOrder Int       @default(0)
+  active       Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  services     Service[]
+}
+
+model Service {
+  id           String          @id @default(cuid())
+  name         String
+  slug         String          @unique
+  categoryId   String
+  category     ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  description  String?
+  price        Decimal?        @db.Decimal(10, 2)
+  priceFrom    Boolean         @default(false)
+  durationMin  Int?
+  durationMax  Int?
+  durationLabel String?
+  featured     Boolean         @default(false)
+  active       Boolean         @default(true)
+  pendingData  Boolean         @default(false)
+  displayOrder Int             @default(0)
+  imageUrl     String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([categoryId])
+  @@index([active, featured])
+  @@index([displayOrder])
+}
+
+model GalleryImage {
+  id           String   @id @default(cuid())
+  title        String?
+  category     String   @default("Νύχια")
+  description  String?
+  altText      String?
+  imageUrl     String
+  featured     Boolean  @default(false)
+  active       Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([active, featured])
+  @@index([category])
+}
+
+model TeamMember {
+  id           String   @id @default(cuid())
+  name         String
+  role         String?
+  services     String?
+  bio          String?
+  photoUrl     String?
+  displayOrder Int      @default(0)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model OpeningHour {
+  id        String  @id @default(cuid())
+  dayOfWeek Int
+  dayNameEl String
+  openTime  String?
+  closeTime String?
+  closed    Boolean @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@unique([dayOfWeek])
+}
+
+model SocialLink {
+  id           String  @id @default(cuid())
+  platform     String
+  label        String
+  url          String
+  active       Boolean @default(true)
+  displayOrder Int     @default(0)
+  updatedAt    DateTime @updatedAt
+}
+
+model SeoSettings {
+  id              String  @id @default("default")
+  siteTitle       String  @default("Angel Nails | Μανικιούρ & Πεντικιούρ στους Αγίους Αναργύρους")
+  metaDescription String  @default("Angel Nails στους Αγίους Αναργύρους. Μανικιούρ, πεντικιούρ, ημιμόνιμο, τεχνητά νύχια, nail care και υπηρεσίες ομορφιάς.")
+  keywords        String  @default("Angel Nails, μανικιούρ, πεντικιούρ, Άγιοι Ανάργυροι, τεχνητά νύχια, ημιμόνιμο")
+  ogImageUrl      String?
+  twitterHandle   String?
+  canonicalBase   String  @default("https://angelnails.gr")
+  updatedAt       DateTime @updatedAt
+}
+
+model PageSeo {
+  id              String  @id @default(cuid())
+  path            String  @unique
+  title           String?
+  description     String?
+  ogImageUrl      String?
+  noIndex         Boolean @default(false)
+  updatedAt       DateTime @updatedAt
+}
+
+model LegalPage {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  content   String
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id         String     @id @default(cuid())
+  userId     String?
+  user       AdminUser? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entity     String
+  entityId   String?
+  details    String?
+  createdAt  DateTime   @default(now())
+
+  @@index([createdAt])
+  @@index([entity])
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  ip        String?
+  success   Boolean
+  createdAt DateTime @default(now())
+
+  @@index([email, createdAt])
+  @@index([ip, createdAt])
+}
+
+model SiteView {
+  id        String   @id @default(cuid())
+  path      String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+}
