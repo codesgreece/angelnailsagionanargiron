@@ -93,7 +93,16 @@
 .lookbook-book.is-open {
   width: min(860px, 92vw);
   height: min(500px, 62vh);
-  transform: rotateX(12deg);
+  transform: rotateX(10deg);
+}
+
+.lookbook-book.is-open.is-stable {
+  cursor: grab;
+  transform: rotateX(10deg);
+}
+
+.lookbook-book.is-open.is-stable:active {
+  cursor: grabbing;
 }
 
 .lookbook-book.is-open.compact {
@@ -104,12 +113,8 @@
 .lookbook-book.is-open.mobile {
   width: min(320px, 86vw);
   height: min(480px, 70vh);
-  transform: rotateX(8deg);
-}
-
-.lookbook-book.is-open.fullscreen-book {
-  width: min(1040px, 96vw);
-  height: min(640px, 76vh);
+  transform: rotateX(6deg);
+  cursor: grab;
 }
 
 .lookbook-floor-shadow {
