@@ -7,7 +7,13 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.treatwell.net" },
     ],
   },
-  transpilePackages: ["three", "@react-three/fiber", "@react-three/drei"],
+  transpilePackages: [
+    "three",
+    "@react-three/fiber",
+    "@react-three/drei",
+    "@react-three/postprocessing",
+    "postprocessing",
+  ],
   experimental: {
     serverActions: {
       bodySizeLimit: "6mb",

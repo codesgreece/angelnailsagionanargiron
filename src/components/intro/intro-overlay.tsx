@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { IntroConfig } from "@/lib/intro/types";
 import { markIntroPlayed } from "@/lib/intro/should-play";
 import { IntroFallback } from "@/components/intro/intro-fallback";
@@ -42,13 +42,15 @@ function supportsWebGL() {
   }
 }
 
-export function IntroOverlay({ config, force, onDone }: Props) {
+export function IntroOverlay({ config, onDone }: Props) {
   const reduce = useReducedMotion();
   const [startedAt] = useState(() => performance.now());
   const [progress, setProgress] = useState(0);
   const [skipReady, setSkipReady] = useState(false);
   const [exiting, setExiting] = useState(false);
+  const [mounted3d, setMounted3d] = useState(true);
   const [use3d, setUse3d] = useState(false);
+  const finished = useRef(false);
   const quality = useMemo(() => detectQuality(config), [config]);
   const duration = Math.min(4000, Math.max(2200, config.durationMs || 3200));
 
@@ -56,152 +58,194 @@ export function IntroOverlay({ config, force, onDone }: Props) {
     setUse3d(supportsWebGL() && !reduce && config.style !== "minimal");
   }, [reduce, config.style]);
 
+  const finish = useCallback(() => {
+    if (finished.current) return;
+    finished.current = true;
+    setExiting(true);
+    markIntroPlayed();
+    window.setTimeout(() => setMounted3d(false), 280);
+    window.setTimeout(() => onDone(), 680);
+  }, [onDone]);
+
   useEffect(() => {
     const skipTimer = window.setTimeout(() => setSkipReady(true), 800);
     const tick = window.setInterval(() => {
       const p = Math.min(1, (performance.now() - startedAt) / duration);
       setProgress(p);
       if (p >= 1) finish();
-    }, 50);
+    }, 40);
     return () => {
       window.clearTimeout(skipTimer);
       window.clearInterval(tick);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [duration, startedAt]);
+  }, [duration, startedAt, finish]);
 
-  const finish = () => {
-    if (exiting) return;
-    setExiting(true);
-    markIntroPlayed();
-    window.setTimeout(() => onDone(), 480);
-  };
-
-  const show3d = use3d && config.style !== "minimal";
+  const show3d = use3d && config.style !== "minimal" && mounted3d;
+  const logoPhase = progress;
 
   return (
-    <AnimatePresence>
-      {!exiting ? (
-        <motion.div
-          className="fixed inset-0 z-[200] overflow-hidden bg-[#050507]"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, filter: "blur(12px)" }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          role="dialog"
-          aria-label="Angel Nails cinematic intro"
-        >
-          {show3d ? (
-            <div className="absolute inset-0">
-              <Canvas
-                dpr={quality === "high" ? [1, 1.5] : [1, 1.1]}
-                gl={{ antialias: quality !== "low", alpha: false, powerPreference: "high-performance" }}
-                camera={{ position: [0, 0.35, 5.2], fov: 42, near: 0.1, far: 40 }}
-                onCreated={({ gl }) => {
-                  gl.setClearColor("#050507");
-                }}
-              >
-                <Suspense fallback={null}>
-                  <IntroScene
-                    config={config}
-                    quality={quality}
-                    reduced={!!reduce}
-                    startedAt={startedAt}
-                  />
-                </Suspense>
-              </Canvas>
-            </div>
-          ) : (
-            <IntroFallback config={config} progress={progress} />
-          )}
+    <motion.div
+      className="fixed inset-0 z-[200] overflow-hidden bg-[#050507]"
+      initial={{ opacity: 1, clipPath: "circle(140% at 50% 46%)" }}
+      animate={
+        exiting
+          ? {
+              opacity: 0,
+              clipPath: "circle(0% at 50% 46%)",
+              filter: "brightness(1.35)",
+            }
+          : { opacity: 1, clipPath: "circle(140% at 50% 46%)" }
+      }
+      transition={{ duration: 0.58, ease: [0.22, 1, 0.36, 1] }}
+      role="dialog"
+      aria-label="Angel Nails cinematic intro"
+    >
+      {show3d ? (
+        <div className="absolute inset-0">
+          <Canvas
+            dpr={quality === "high" ? [1, 1.5] : quality === "medium" ? [1, 1.15] : [1, 1]}
+            gl={{
+              antialias: quality !== "low",
+              alpha: false,
+              powerPreference: "high-performance",
+              stencil: false,
+              depth: true,
+            }}
+            camera={{ position: [0, 0.42, 5.4], fov: 40, near: 0.1, far: 40 }}
+            onCreated={({ gl }) => {
+              gl.setClearColor("#050507");
+              gl.toneMappingExposure = 1.05;
+            }}
+          >
+            <Suspense fallback={null}>
+              <IntroScene
+                config={config}
+                quality={quality}
+                reduced={!!reduce}
+                startedAt={startedAt}
+                exiting={exiting}
+              />
+            </Suspense>
+          </Canvas>
+        </div>
+      ) : (
+        <IntroFallback config={config} progress={progress} />
+      )}
 
-          {/* Logo HTML overlay — brand-accurate script */}
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-            <motion.div
-              className="text-center"
-              initial={{ opacity: 0, scale: 0.92, filter: "blur(8px)" }}
-              animate={{
-                opacity: progress > 0.28 ? 1 : 0,
-                scale: progress > 0.28 ? 1 : 0.92,
-                filter: progress > 0.4 ? "blur(0px)" : "blur(6px)",
-              }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <p
-                className="text-[clamp(3.2rem,10vw,6.5rem)] leading-none text-[#FF3F87]"
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+        <div className="relative text-center" style={{ perspective: "900px" }}>
+          {/* HTML logo for 2D fallback / minimal — 3D scene owns the logo otherwise */}
+          {!show3d && (
+            <>
+              <motion.p
+                className="absolute inset-0 text-[clamp(3.2rem,10vw,6.5rem)] leading-none"
                 style={{
                   fontFamily: "var(--font-great-vibes), 'Great Vibes', cursive",
-                  textShadow:
-                    "0 0 40px rgba(237,47,120,0.55), 0 10px 40px rgba(0,0,0,0.65)",
+                  color: "transparent",
+                  WebkitTextStroke: "1px rgba(255,63,135,0.85)",
                 }}
+                animate={{
+                  opacity: logoPhase > 0.28 && logoPhase < 0.55 ? 0.9 : 0,
+                  scale: logoPhase > 0.28 ? 1 : 0.94,
+                }}
+                transition={{ duration: 0.45 }}
               >
                 Angel Nails
-              </p>
-
-              {config.showSubtitle && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: progress > 0.55 ? 1 : 0, y: progress > 0.55 ? 0 : 10 }}
-                  transition={{ duration: 0.5 }}
-                  className="mt-6 space-y-2"
-                >
-                  <p className="text-[10px] font-medium uppercase tracking-[0.35em] text-white/80 md:text-[11px]">
-                    MANICURE • PEDICURE • ΤΕΧΝΗΤΑ ΝΥΧΙΑ
-                  </p>
-                  <p className="text-[9px] uppercase tracking-[0.42em] text-white/45">
-                    BEAUTY LIVES IN DETAILS
-                  </p>
-                </motion.div>
-              )}
-            </motion.div>
-          </div>
-
-          {/* Cinematic light sweep near end */}
-          <motion.div
-            className="pointer-events-none absolute inset-0"
-            initial={{ opacity: 0, x: "-40%" }}
-            animate={
-              progress > 0.78
-                ? { opacity: [0, 0.45, 0], x: ["-40%", "20%", "110%"] }
-                : { opacity: 0 }
-            }
-            transition={{ duration: 0.85, ease: "easeInOut" }}
-            style={{
-              background:
-                "linear-gradient(105deg, transparent 30%, rgba(255,63,135,0.35) 50%, transparent 70%)",
-            }}
-          />
-
-          {config.showSkip && skipReady && (
-            <button
-              type="button"
-              onClick={finish}
-              className="absolute right-5 top-5 z-10 text-[11px] font-medium uppercase tracking-[0.28em] text-white/55 transition hover:text-white"
-            >
-              Skip
-            </button>
+              </motion.p>
+              <motion.p
+                className="relative text-[clamp(3.2rem,10vw,6.5rem)] leading-none"
+                style={{
+                  fontFamily: "var(--font-great-vibes), 'Great Vibes', cursive",
+                  background:
+                    "linear-gradient(120deg, #ED2F78 0%, #FF3F87 35%, #fff 48%, #FF3F87 62%, #ED2F78 100%)",
+                  backgroundSize: "220% 100%",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                  filter:
+                    logoPhase > 0.4
+                      ? "drop-shadow(0 0 28px rgba(237,47,120,0.55))"
+                      : "blur(4px)",
+                }}
+                animate={{
+                  opacity: logoPhase > 0.32 ? (exiting ? 0 : 1) : 0,
+                  scale: exiting ? 1.35 : logoPhase > 0.32 ? 1 : 0.92,
+                  backgroundPosition: logoPhase > 0.5 ? ["0% 50%", "100% 50%"] : "0% 50%",
+                }}
+                transition={{ duration: exiting ? 0.45 : 0.75, ease: [0.22, 1, 0.36, 1] }}
+              >
+                Angel Nails
+              </motion.p>
+            </>
           )}
 
-          {config.showLoading && (
-            <div className="absolute bottom-10 left-1/2 z-10 w-[min(220px,60vw)] -translate-x-1/2 text-center">
-              <div className="h-px w-full overflow-hidden bg-white/15">
-                <motion.div
-                  className="h-full bg-[#ED2F78]"
-                  style={{ width: `${Math.round(progress * 100)}%` }}
-                />
-              </div>
-              <p className="mt-3 text-[9px] uppercase tracking-[0.35em] text-white/40">Loading...</p>
+          {/* Spacer when 3D logo is active so subtitles sit under the mark */}
+          {show3d && (
+            <div
+              className="text-[clamp(3.2rem,10vw,6.5rem)] leading-none opacity-0"
+              aria-hidden
+            >
+              Angel Nails
             </div>
           )}
-        </motion.div>
-      ) : (
-        <motion.div
-          key="exit-sweep"
-          className="fixed inset-0 z-[200] bg-[#050507]"
-          initial={{ opacity: 1, clipPath: "circle(120% at 50% 45%)" }}
-          animate={{ opacity: 0, clipPath: "circle(0% at 50% 45%)" }}
-          transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
-        />
+
+          {config.showSubtitle && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{
+                opacity: logoPhase > 0.58 && !exiting ? 1 : 0,
+                y: logoPhase > 0.58 ? 0 : 12,
+              }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-7 space-y-2.5"
+            >
+              <p className="text-[10px] font-medium uppercase tracking-[0.38em] text-[#F7F6F4]/85 md:text-[11px]">
+                MANICURE • PEDICURE • ΤΕΧΝΗΤΑ ΝΥΧΙΑ
+              </p>
+              <p className="text-[9px] uppercase tracking-[0.46em] text-[#D8D5D2]/45">
+                BEAUTY LIVES IN DETAILS
+              </p>
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      <motion.div
+        className="pointer-events-none absolute inset-0 mix-blend-screen"
+        initial={{ opacity: 0, x: "-45%" }}
+        animate={
+          progress > 0.78 || exiting
+            ? { opacity: [0, 0.55, 0], x: ["-45%", "15%", "120%"] }
+            : { opacity: 0 }
+        }
+        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        style={{
+          background:
+            "linear-gradient(108deg, transparent 28%, rgba(255,63,135,0.45) 48%, rgba(255,255,255,0.2) 52%, transparent 72%)",
+        }}
+      />
+
+      {config.showSkip && skipReady && !exiting && (
+        <button
+          type="button"
+          onClick={finish}
+          className="absolute right-5 top-5 z-10 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50 transition hover:text-white"
+        >
+          Skip
+        </button>
       )}
-    </AnimatePresence>
+
+      {config.showLoading && !exiting && (
+        <div className="absolute bottom-10 left-1/2 z-10 w-[min(220px,60vw)] -translate-x-1/2 text-center">
+          <div className="h-px w-full overflow-hidden bg-white/12">
+            <div
+              className="h-full bg-[#ED2F78] transition-[width] duration-75 ease-linear"
+              style={{ width: `${Math.round(progress * 100)}%` }}
+            />
+          </div>
+          <p className="mt-3 text-[9px] uppercase tracking-[0.35em] text-white/40">Loading...</p>
+        </div>
+      )}
+    </motion.div>
   );
 }
