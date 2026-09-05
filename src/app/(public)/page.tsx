@@ -15,8 +15,6 @@ import {
   getSiteSettings,
   getTeamMembers,
 } from "@/lib/services/content";
-import { getLookbookData } from "@/lib/lookbook/data";
-import { LookbookHomeSection } from "@/components/lookbook/home-section";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -35,13 +33,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [settings, pages, featured, gallery, team, lookbook] = await Promise.all([
+  const [settings, pages, featured, gallery, team] = await Promise.all([
     getSiteSettings(),
     getPageContentMap(),
     getFeaturedServices(),
     getGalleryImages({ featuredOnly: true }),
     getTeamMembers(),
-    getLookbookData(),
   ]);
 
   const hero = pages["home.hero"];
@@ -127,8 +124,6 @@ export default async function HomePage() {
           </FadeIn>
         </div>
       </section>
-
-      <LookbookHomeSection data={lookbook} />
 
       {gallery.length > 0 && (
         <section className="bg-[#F7F6F4] py-16 md:py-28">

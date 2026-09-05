@@ -52,7 +52,6 @@ export function SiteFooter({
               ["/", "Αρχική"],
               ["/services", "Υπηρεσίες"],
               ["/gallery", "Gallery"],
-              ["/lookbook", "Lookbook"],
               ["/about", "Σχετικά"],
               ["/contact", "Επικοινωνία"],
             ].map(([href, label]) => (

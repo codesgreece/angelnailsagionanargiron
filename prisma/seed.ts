@@ -574,36 +574,15 @@ async function main() {
 
   for (const g of gallery) {
     const existing = await prisma.galleryImage.findFirst({ where: { imageUrl: g.imageUrl } });
-    const lookbookData = {
-      lookbookEnabled: true,
-      lookbookOrder: g.displayOrder,
-      lookbookTitle: g.title,
-      lookbookCategory: g.category,
-      lookbookFeatured: g.featured,
-      lookbookDescription: "Angel Nails lookbook",
-    };
     if (existing) {
       await prisma.galleryImage.update({
         where: { id: existing.id },
-        data: { ...g, ...lookbookData, active: true },
+        data: { ...g, active: true },
       });
     } else {
-      await prisma.galleryImage.create({ data: { ...g, ...lookbookData, active: true } });
+      await prisma.galleryImage.create({ data: { ...g, active: true } });
     }
   }
-
-  await prisma.lookbookSettings.upsert({
-    where: { id: "default" },
-    update: {},
-    create: {
-      id: "default",
-      title: "THE ANGEL NAILS BOOK",
-      subtitle: "NAIL LOOKS • DETAILS • INSPIRATION",
-      coverImageUrl: "/images/store/venue-1.png",
-      homepageEnabled: true,
-      homepageBlurb: "Μια ματιά στα looks που δημιουργούμε.",
-    },
-  });
 
   await prisma.introSettings.upsert({
     where: { id: "default" },
