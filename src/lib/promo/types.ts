@@ -13,7 +13,7 @@ export const DEFAULT_PROMO_POPUP: PromoPopupConfig = {
   ctaLabel: "Κλείσε Ραντεβού",
   ctaUrl: null,
   imageUrl: null,
-  delayMs: 1200,
+  delayMs: 6000,
   updatedAt: new Date(),
 };
 

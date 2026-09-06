@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdminApi, jsonError } from "@/lib/api";
 import { writeAuditLog } from "@/lib/auth/audit";
+import { ensurePromoPopupSettings } from "@/lib/promo/data";
 
 const schema = z.object({
   enabled: z.boolean().optional(),
@@ -19,12 +20,16 @@ const schema = z.object({
 export async function GET() {
   const { response } = await requireAdminApi();
   if (response) return response;
-  const settings = await prisma.promoPopupSettings.upsert({
-    where: { id: "default" },
-    update: {},
-    create: { id: "default" },
-  });
-  return NextResponse.json(settings);
+  try {
+    const settings = await ensurePromoPopupSettings();
+    return NextResponse.json(settings);
+  } catch (error) {
+    console.error("[api/admin/promo-popup] GET failed", error);
+    return jsonError(
+      "Η βάση δεν είναι έτοιμη για promo popup. Ξαναδοκίμασε μετά το deploy.",
+      503,
+    );
+  }
 }
 
 export async function PATCH(req: NextRequest) {
@@ -40,19 +45,27 @@ export async function PATCH(req: NextRequest) {
     imageUrl: parsed.data.imageUrl === "" ? null : parsed.data.imageUrl,
   };
 
-  const updated = await prisma.promoPopupSettings.upsert({
-    where: { id: "default" },
-    update: data,
-    create: { id: "default", ...data },
-  });
+  try {
+    await ensurePromoPopupSettings();
+    const updated = await prisma.promoPopupSettings.update({
+      where: { id: "default" },
+      data,
+    });
 
-  await writeAuditLog({
-    userId: user!.id,
-    action: "update",
-    entity: "PromoPopupSettings",
-    entityId: "default",
-    details: data,
-  });
+    await writeAuditLog({
+      userId: user!.id,
+      action: "update",
+      entity: "PromoPopupSettings",
+      entityId: "default",
+      details: data,
+    });
 
-  return NextResponse.json(updated);
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error("[api/admin/promo-popup] PATCH failed", error);
+    return jsonError(
+      "Αποτυχία αποθήκευσης. Έλεγξε ότι το migration έχει εφαρμοστεί.",
+      503,
+    );
+  }
 }
