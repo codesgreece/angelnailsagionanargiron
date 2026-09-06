@@ -18,6 +18,7 @@ import {
   FALLBACK_SERVICES,
   FALLBACK_TEAM,
 } from "@/lib/services/fallbacks";
+import { sharpStoreImage } from "@/lib/images/sharp-store";
 
 const defaultSettings = {
   id: "default",
@@ -78,12 +79,17 @@ async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
 }
 
 export const getSiteSettings = cache(async () => {
-  return safe(async () => {
+  const settings = await safe(async () => {
     return (
       (await prisma.siteSettings.findUnique({ where: { id: "default" } })) ||
       (await prisma.siteSettings.create({ data: { id: "default" } }))
     );
   }, defaultSettings);
+
+  return {
+    ...settings,
+    heroImageUrl: sharpStoreImage(settings.heroImageUrl, "/images/store/venue-1.jpg?v=3"),
+  };
 });
 
 export const getSeoSettings = cache(async () => {
@@ -101,7 +107,14 @@ export const getPageContentMap = cache(async () => {
     return Object.fromEntries(rows.map((p) => [p.key, p]));
   }, {} as Record<string, PageContent>);
 
-  return { ...FALLBACK_PAGES, ...pages } as Record<string, PageContent>;
+  const merged = { ...FALLBACK_PAGES, ...pages } as Record<string, PageContent>;
+  for (const key of Object.keys(merged)) {
+    const page = merged[key];
+    if (page?.imageUrl) {
+      merged[key] = { ...page, imageUrl: sharpStoreImage(page.imageUrl, page.imageUrl) };
+    }
+  }
+  return merged;
 });
 
 export const getOpeningHours = cache(async () => {
@@ -174,8 +187,11 @@ export const getGalleryImages = cache(async (opts?: { featuredOnly?: boolean }) 
       }),
     [] as GalleryImage[],
   );
-  if (rows.length > 0) return rows;
-  return opts?.featuredOnly ? FALLBACK_GALLERY.filter((g) => g.featured) : FALLBACK_GALLERY;
+  const source = rows.length > 0 ? rows : opts?.featuredOnly ? FALLBACK_GALLERY.filter((g) => g.featured) : FALLBACK_GALLERY;
+  return source.map((img) => ({
+    ...img,
+    imageUrl: sharpStoreImage(img.imageUrl, img.imageUrl),
+  }));
 });
 
 export const getTeamMembers = cache(async () => {
