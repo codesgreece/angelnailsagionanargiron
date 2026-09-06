@@ -21,7 +21,7 @@ export default async function GalleryPage() {
 
   return (
     <div className="bg-white pt-28 pb-20">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
+      <div className="mx-auto max-w-5xl px-4 md:px-6">
         <FadeIn className="mb-10 max-w-2xl">
           <p className="text-xs uppercase tracking-[0.28em] text-[var(--brand-pink)]">Gallery</p>
           <h1

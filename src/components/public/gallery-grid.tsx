@@ -41,9 +41,9 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
       {filtered.length === 0 ? (
         <p className="mt-12 text-center text-black/55">Δεν υπάρχουν εικόνες σε αυτή την κατηγορία.</p>
       ) : (
-        <div className="mt-8 columns-1 gap-4 sm:columns-2 lg:columns-3">
+        <div className="mx-auto mt-8 max-w-5xl columns-1 gap-3 sm:columns-2 sm:gap-4 md:columns-3 lg:columns-4">
           {filtered.map((img, i) => (
-            <FadeIn key={img.id} delay={Math.min(i * 0.03, 0.18)} className="mb-4 break-inside-avoid">
+            <FadeIn key={img.id} delay={Math.min(i * 0.03, 0.18)} className="mb-3 break-inside-avoid sm:mb-4">
               <button
                 id={img.id}
                 type="button"
@@ -53,10 +53,10 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 <StoreImage
                   src={img.imageUrl}
                   alt={img.altText || img.title || "Angel Nails gallery"}
-                  width={1200}
-                  height={1500}
+                  width={900}
+                  height={1125}
                   loading="lazy"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="h-auto w-full object-cover transition duration-500 group-hover:scale-[1.02]"
                 />
                 <div className="pointer-events-none absolute inset-0 bg-black/0 transition group-hover:bg-black/20" />

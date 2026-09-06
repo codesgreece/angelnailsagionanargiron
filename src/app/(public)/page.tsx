@@ -143,16 +143,16 @@ export default async function HomePage() {
                 Δες περισσότερα
               </ButtonLink>
             </FadeIn>
-            <div className="grid grid-cols-2 gap-2 md:gap-3 lg:grid-cols-3">
-              {gallery.slice(0, 6).map((img, i) => (
-                <FadeIn key={img.id} delay={i * 0.04} className={i === 0 ? "col-span-2 lg:col-span-1" : ""}>
+            <div className="mx-auto grid max-w-5xl grid-cols-2 gap-2 md:gap-3 md:grid-cols-3 lg:grid-cols-4">
+              {gallery.slice(0, 8).map((img, i) => (
+                <FadeIn key={img.id} delay={i * 0.04}>
                   <div className="relative aspect-[4/5] overflow-hidden bg-black/5">
                     <StoreImage
                       src={img.imageUrl}
                       alt={img.altText || img.title || "Angel Nails"}
                       fill
                       className="object-cover transition duration-700 hover:scale-[1.02]"
-                      sizes="(max-width: 768px) 50vw, 33vw"
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     />
                   </div>
                 </FadeIn>
