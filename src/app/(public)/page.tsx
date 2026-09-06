@@ -85,14 +85,15 @@ export default async function HomePage() {
               ))}
             </ul>
           </FadeIn>
-          <FadeIn delay={0.12} className="md:justify-self-end">
-            <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden bg-[#D8D5D2] shadow-[0_24px_60px_rgba(9,9,11,0.12)] md:mx-0 md:max-w-[360px] lg:max-w-[400px]">
+          <FadeIn delay={0.12} className="w-full">
+            <div className="relative mx-auto aspect-[4/5] w-full max-w-[420px] overflow-hidden bg-[#D8D5D2] shadow-[0_24px_60px_rgba(9,9,11,0.12)] md:ml-auto md:mr-0">
               <StoreImage
                 src="/images/store/venue-2-v4.jpg"
                 alt="Angel Nails — λεπτομέρεια νυχιών"
                 fill
+                priority
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 400px"
+                sizes="(max-width: 768px) 100vw, 420px"
               />
             </div>
           </FadeIn>
