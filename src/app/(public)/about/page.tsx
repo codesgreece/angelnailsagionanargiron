@@ -55,9 +55,10 @@ export default async function AboutPage() {
         <FadeIn delay={0.08}>
           <div className="relative aspect-[4/5] overflow-hidden">
             <Image
-              src={about?.imageUrl || "/images/store/venue-1.png"}
+              src={about?.imageUrl || "/images/store/venue-1.jpg"}
               alt="Angel Nails"
               fill
+              quality={90}
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />

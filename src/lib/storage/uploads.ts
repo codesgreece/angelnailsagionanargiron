@@ -37,8 +37,8 @@ export async function saveOptimizedImage(file: File, folder = "general") {
 
   await sharp(buffer)
     .rotate()
-    .resize({ width: 2000, height: 2000, fit: "inside", withoutEnlargement: true })
-    .webp({ quality: 82 })
+    .resize({ width: 2400, height: 2400, fit: "inside", withoutEnlargement: true })
+    .webp({ quality: 88 })
     .toFile(dest);
 
   return `/uploads/${safeFolder}/${filename}`;

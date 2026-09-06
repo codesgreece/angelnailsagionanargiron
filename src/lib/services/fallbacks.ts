@@ -118,7 +118,7 @@ export const FALLBACK_GALLERY: GalleryImage[] = [
     category: "Χώρος",
     description: null,
     altText: "Ταμπέλα Angel Nails",
-    imageUrl: "/images/store/venue-1.png",
+    imageUrl: "/images/store/venue-1.jpg",
     featured: true,
     active: true,
     displayOrder: 0,
@@ -176,7 +176,7 @@ export const FALLBACK_PAGES: Record<string, Partial<PageContent>> = {
     title: "Angel Nails",
     subtitle: "Η περιποίηση των άκρων, στη δική μας αισθητική.",
     body: "Μανικιούρ • Πεντικιούρ • Τεχνητά Νύχια • Nail Care",
-    imageUrl: "/images/store/venue-1.png",
+    imageUrl: "/images/store/venue-1.jpg",
   },
   "home.intro": {
     key: "home.intro",
@@ -194,7 +194,7 @@ export const FALLBACK_PAGES: Record<string, Partial<PageContent>> = {
     title: "Σχετικά με το Angel Nails",
     subtitle: "Ο χώρος και η εμπειρία",
     body: "Το Angel Nails στους Αγίους Αναργύρους είναι ένας σύγχρονος χώρος ομορφιάς και περιποίησης που προσφέρει ολοκληρωμένες υπηρεσίες αισθητικής με έμφαση στη φροντίδα των άκρων.",
-    imageUrl: "/images/store/venue-1.png",
+    imageUrl: "/images/store/venue-1.jpg",
   },
   contact: {
     key: "contact",

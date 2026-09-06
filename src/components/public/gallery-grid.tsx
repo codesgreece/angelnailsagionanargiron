@@ -53,10 +53,12 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 <Image
                   src={img.imageUrl}
                   alt={img.altText || img.title || "Angel Nails gallery"}
-                  width={800}
-                  height={1000}
+                  width={1200}
+                  height={1500}
+                  quality={90}
                   loading="lazy"
-                  className="h-auto w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="h-auto w-full object-cover transition duration-500 group-hover:scale-[1.02]"
                 />
                 <div className="pointer-events-none absolute inset-0 bg-black/0 transition group-hover:bg-black/20" />
               </button>
@@ -85,8 +87,10 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
             <Image
               src={active.imageUrl}
               alt={active.altText || active.title || "Angel Nails gallery"}
-              width={1400}
-              height={1000}
+              width={2000}
+              height={1400}
+              quality={92}
+              sizes="100vw"
               className="max-h-[85vh] w-auto object-contain"
             />
             {(active.title || active.description) && (

@@ -39,7 +39,7 @@ const defaultSettings = {
   longitude: 23.71743857,
   logoUrl: null,
   faviconUrl: null,
-  heroImageUrl: "/images/store/venue-1.png",
+  heroImageUrl: "/images/store/venue-1.jpg",
   primaryColor: "#09090B",
   secondaryColor: "#17171A",
   accentColor: "#ED2F78",
@@ -63,7 +63,7 @@ const defaultSeo = {
   metaDescription:
     "Angel Nails στους Αγίους Αναργύρους. Μανικιούρ, πεντικιούρ, ημιμόνιμο, τεχνητά νύχια, nail care και υπηρεσίες ομορφιάς.",
   keywords: "Angel Nails, μανικιούρ, πεντικιούρ, Άγιοι Ανάργυροι",
-  ogImageUrl: "/images/store/venue-1.png",
+  ogImageUrl: "/images/store/venue-1.jpg",
   twitterHandle: null,
   canonicalBase: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   updatedAt: new Date(),

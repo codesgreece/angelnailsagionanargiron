@@ -15,7 +15,7 @@ export function buildMetadata(params: {
     params.seo?.metaDescription ||
     "Angel Nails στους Αγίους Αναργύρους.";
   const url = absoluteUrl(params.path || "/");
-  const og = params.ogImage || params.seo?.ogImageUrl || "/images/store/venue-1.png";
+  const og = params.ogImage || params.seo?.ogImageUrl || "/images/store/venue-1.jpg";
 
   return {
     title,
@@ -48,7 +48,7 @@ export function localBusinessJsonLd(settings: SiteSettings) {
     name: settings.brandName,
     image: settings.heroImageUrl
       ? absoluteUrl(settings.heroImageUrl)
-      : absoluteUrl("/images/store/venue-1.png"),
+      : absoluteUrl("/images/store/venue-1.jpg"),
     url: absoluteUrl("/"),
     telephone: settings.phonePrimary,
     email: settings.email,

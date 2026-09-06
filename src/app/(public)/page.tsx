@@ -51,7 +51,7 @@ export default async function HomePage() {
         title={hero?.title || "Angel Nails"}
         subtitle={hero?.subtitle || "Η περιποίηση των άκρων, στη δική μας αισθητική."}
         body={hero?.body || "Μανικιούρ • Πεντικιούρ • Τεχνητά Νύχια • Nail Care"}
-        imageUrl={hero?.imageUrl || settings.heroImageUrl || "/images/store/venue-1.png"}
+        imageUrl={hero?.imageUrl || settings.heroImageUrl || "/images/store/venue-1.jpg"}
         treatwellUrl={settings.treatwellUrl}
       />
 
@@ -88,9 +88,10 @@ export default async function HomePage() {
           <FadeIn delay={0.12}>
             <div className="relative aspect-[4/5] overflow-hidden bg-[#D8D5D2] anim-float shadow-[0_24px_60px_rgba(9,9,11,0.12)]">
               <Image
-                src="/images/store/venue-1.png"
+                src="/images/store/venue-1.jpg"
                 alt="Angel Nails storefront"
                 fill
+                quality={90}
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
@@ -150,8 +151,9 @@ export default async function HomePage() {
                       src={img.imageUrl}
                       alt={img.altText || img.title || "Angel Nails"}
                       fill
-                      className="object-cover transition duration-700 hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      quality={90}
+                      className="object-cover transition duration-700 hover:scale-[1.02]"
+                      sizes="(max-width: 768px) 50vw, 33vw"
                     />
                   </div>
                 </FadeIn>

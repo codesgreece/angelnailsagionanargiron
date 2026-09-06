@@ -28,7 +28,8 @@ export function HeroSection({
           alt="Angel Nails — χώρος στο κατάστημα"
           fill
           priority
-          className="object-cover object-[center_35%] scale-105 md:object-center"
+          quality={90}
+          className="object-cover object-[center_35%] md:object-center"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-black/55" />

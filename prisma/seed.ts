@@ -96,7 +96,7 @@ async function main() {
       postalCode: "13561",
       country: "Greece",
       treatwellUrl: "https://www.treatwell.gr/katasthma/angel-nails-16/",
-      heroImageUrl: "/images/store/venue-1.png",
+      heroImageUrl: "/images/store/venue-1.jpg",
       logoUrl: null,
       latitude: 38.02831846,
       longitude: 23.71743857,
@@ -113,7 +113,7 @@ async function main() {
         "Angel Nails στους Αγίους Αναργύρους. Μανικιούρ, πεντικιούρ, ημιμόνιμο, τεχνητά νύχια, nail care και υπηρεσίες ομορφιάς.",
       keywords:
         "Angel Nails, μανικιούρ, πεντικιούρ, Άγιοι Ανάργυροι, τεχνητά νύχια, ημιμόνιμο, nail salon",
-      ogImageUrl: "/images/store/venue-1.png",
+      ogImageUrl: "/images/store/venue-1.jpg",
       canonicalBase: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
     },
   });
@@ -126,7 +126,7 @@ async function main() {
       body: "Μανικιούρ • Πεντικιούρ • Τεχνητά Νύχια • Nail Care",
       ctaLabel: "Κλείσε Ραντεβού",
       ctaHref: "treatwell",
-      imageUrl: "/images/store/venue-1.png",
+      imageUrl: "/images/store/venue-1.jpg",
     },
     {
       key: "home.intro",
@@ -144,7 +144,7 @@ async function main() {
       title: "Σχετικά με το Angel Nails",
       subtitle: "Ο χώρος και η εμπειρία",
       body: "Το Angel Nails στους Αγίους Αναργύρους είναι ένας σύγχρονος χώρος ομορφιάς και περιποίησης που προσφέρει ολοκληρωμένες υπηρεσίες αισθητικής με έμφαση στη φροντίδα των άκρων. Εξειδικεύεται σε μανικιούρ, πεντικιούρ, ημιμόνιμη βαφή, τεχνητά νύχια και nail designs, ενώ παράλληλα παρέχει υπηρεσίες αποτρίχωσης.\n\nΜε έμφαση στη λεπτομέρεια και ένα ζεστό, φιλικό περιβάλλον, το Angel Nails προσφέρει μια ολοκληρωμένη εμπειρία περιποίησης για κάθε επισκέπτη.",
-      imageUrl: "/images/store/venue-1.png",
+      imageUrl: "/images/store/venue-1.jpg",
     },
     {
       key: "contact",
@@ -542,7 +542,7 @@ async function main() {
       title: "Angel Nails storefront",
       category: "Χώρος",
       altText: "Ταμπέλα Angel Nails στους Αγίους Αναργύρους",
-      imageUrl: "/images/store/venue-1.png",
+      imageUrl: "/images/store/venue-1.jpg",
       featured: true,
       displayOrder: 0,
     },
