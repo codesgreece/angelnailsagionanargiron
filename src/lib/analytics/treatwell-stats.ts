@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { ensureTreatwellClickTable } from "@/lib/analytics/ensure-treatwell-table";
 
 const SOURCE_LABELS: Record<string, string> = {
   hero: "Hero (αρχική)",
@@ -11,7 +12,8 @@ const SOURCE_LABELS: Record<string, string> = {
   homepage: "Homepage CTA",
   about: "Σχετικά",
   contact: "Επικοινωνία",
-  "promo-popup": "Promo popup",};
+  "promo-popup": "Promo popup",
+};
 
 export function labelTreatwellSource(source: string) {
   return SOURCE_LABELS[source] || source;
@@ -31,6 +33,8 @@ function daysAgo(n: number) {
 }
 
 export async function getTreatwellClickStats() {
+  await ensureTreatwellClickTable();
+
   const today = startOfToday();
   const last7 = daysAgo(6);
   const last30 = daysAgo(29);
