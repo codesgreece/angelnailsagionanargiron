@@ -157,6 +157,22 @@ model IntroSettings {
   updatedAt       DateTime @updatedAt
 }
 
+/// Sitewide promotional popup — managed from admin.
+model PromoPopupSettings {
+  id        String   @id @default("default")
+  enabled   Boolean  @default(true)
+  /// "always" = every page refresh | "once" = once per browser until campaign changes
+  frequency String   @default("always")
+  eyebrow   String   @default("ΠΡΟΣΦΟΡΑ")
+  title     String   @default("Δώρο ενυδάτωση")
+  body      String   @default("Με κάθε πεντικιούρ, δώρο μια θεραπεία ενυδάτωσης.")
+  ctaLabel  String   @default("Κλείσε Ραντεβού")
+  ctaUrl    String?
+  imageUrl  String?
+  delayMs   Int      @default(1200)
+  updatedAt DateTime @updatedAt
+}
+
 model TeamMember {
   id           String   @id @default(cuid())
   name         String

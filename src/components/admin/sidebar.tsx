@@ -30,6 +30,7 @@ const NAV = [
       { href: "/admin/content/about", label: "About" },
       { href: "/admin/content/contact", label: "Contact" },
       { href: "/admin/content/footer", label: "Footer" },
+      { href: "/admin/content/promo-popup", label: "Promo Popup" },
     ],
   },
   {

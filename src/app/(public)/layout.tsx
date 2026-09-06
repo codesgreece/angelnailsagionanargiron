@@ -6,20 +6,23 @@ import { CookieBanner } from "@/components/public/cookie-banner";
 import { ViewTracker } from "@/components/public/view-tracker";
 import { StickyBookingBar } from "@/components/public/sticky-booking-bar";
 import { IntroGate } from "@/components/intro/intro-gate";
+import { PromoPopupGate } from "@/components/promo/promo-popup-gate";
 import {
   getOpeningHours,
   getSiteSettings,
   getSocialLinks,
 } from "@/lib/services/content";
 import { getIntroSettings } from "@/lib/intro/data";
+import { getPromoPopupSettings } from "@/lib/promo/data";
 import { localBusinessJsonLd } from "@/lib/seo/metadata";
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [settings, hours, socials, intro] = await Promise.all([
+  const [settings, hours, socials, intro, promo] = await Promise.all([
     getSiteSettings(),
     getOpeningHours(),
     getSocialLinks(),
     getIntroSettings(),
+    getPromoPopupSettings(),
   ]);
 
   const cssVars = {
@@ -39,6 +42,10 @@ export default async function PublicLayout({ children }: { children: React.React
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd(settings)) }}
       />
       <IntroGate config={JSON.parse(JSON.stringify(intro))} />
+      <PromoPopupGate
+        config={JSON.parse(JSON.stringify(promo))}
+        treatwellUrl={settings.treatwellUrl}
+      />
       <ViewTracker />
       <SiteHeader treatwellUrl={settings.treatwellUrl} />
       <main>{children}</main>

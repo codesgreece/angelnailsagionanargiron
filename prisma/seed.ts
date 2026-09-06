@@ -603,6 +603,21 @@ async function main() {
     },
   });
 
+  await prisma.promoPopupSettings.upsert({
+    where: { id: "default" },
+    update: {},
+    create: {
+      id: "default",
+      enabled: true,
+      frequency: "always",
+      eyebrow: "ΠΡΟΣΦΟΡΑ",
+      title: "Με κάθε πεντικιούρ",
+      body: "Δώρο μια θεραπεία ενυδάτωσης — για απαλά, λαμπερά πόδια.",
+      ctaLabel: "Κλείσε Ραντεβού",
+      delayMs: 1200,
+    },
+  });
+
   const legal = [
     {
       slug: "privacy-policy",
