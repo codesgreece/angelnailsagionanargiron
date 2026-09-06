@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import Image from "next/image";
+import { StoreImage } from "@/components/ui/store-image";
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/public/hero-section";
 import { ServiceCard } from "@/components/public/service-card";
@@ -51,7 +51,7 @@ export default async function HomePage() {
         title={hero?.title || "Angel Nails"}
         subtitle={hero?.subtitle || "Η περιποίηση των άκρων, στη δική μας αισθητική."}
         body={hero?.body || "Μανικιούρ • Πεντικιούρ • Τεχνητά Νύχια • Nail Care"}
-        imageUrl={hero?.imageUrl || settings.heroImageUrl || "/images/store/venue-1-v3.jpg"}
+        imageUrl={hero?.imageUrl || settings.heroImageUrl || "/images/store/venue-1-v4.jpg"}
         treatwellUrl={settings.treatwellUrl}
       />
 
@@ -87,11 +87,10 @@ export default async function HomePage() {
           </FadeIn>
           <FadeIn delay={0.12}>
             <div className="relative aspect-[4/5] overflow-hidden bg-[#D8D5D2] shadow-[0_24px_60px_rgba(9,9,11,0.12)]">
-              <Image
-                src="/images/store/venue-2-v3.jpg"
+              <StoreImage
+                src="/images/store/venue-2-v4.jpg"
                 alt="Angel Nails — λεπτομέρεια νυχιών"
                 fill
-                quality={95}
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
@@ -147,11 +146,10 @@ export default async function HomePage() {
               {gallery.slice(0, 6).map((img, i) => (
                 <FadeIn key={img.id} delay={i * 0.04} className={i === 0 ? "col-span-2 lg:col-span-1" : ""}>
                   <div className="relative aspect-[4/5] overflow-hidden bg-black/5">
-                    <Image
+                    <StoreImage
                       src={img.imageUrl}
                       alt={img.altText || img.title || "Angel Nails"}
                       fill
-                      quality={90}
                       className="object-cover transition duration-700 hover:scale-[1.02]"
                       sizes="(max-width: 768px) 50vw, 33vw"
                     />

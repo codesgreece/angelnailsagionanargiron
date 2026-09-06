@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { StoreImage } from "@/components/ui/store-image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ButtonLink } from "@/components/ui/button-link";
 import { sharpStoreImage } from "@/lib/images/sharp-store";
@@ -26,16 +26,15 @@ export function HeroSection({
     <section className="relative overflow-hidden bg-[#09090B] text-white">
       {/* Mobile: full-bleed photo with lighter veil */}
       <div className="absolute inset-0 md:hidden">
-        <Image
+        <StoreImage
           src={photo}
           alt="Angel Nails — nail studio στους Αγίους Αναργύρους"
           fill
           priority
-          quality={95}
           sizes="100vw"
           className="object-cover object-[center_30%]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/20" />
       </div>
 
       <div className="relative mx-auto grid min-h-[100svh] max-w-7xl md:grid-cols-2">
@@ -87,16 +86,15 @@ export function HeroSection({
 
         {/* Desktop photo — natural size, no heavy dark wash */}
         <div className="relative hidden min-h-[100svh] md:block">
-          <Image
+          <StoreImage
             src={photo}
             alt="Angel Nails — χώρος στο κατάστημα"
             fill
             priority
-            quality={95}
-            sizes="50vw"
+              sizes="50vw"
             className="object-cover object-center"
           />
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black/35" />
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-black/25" />
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import Image from "next/image";
+import { StoreImage } from "@/components/ui/store-image";
 import type { Metadata } from "next";
 import { FadeIn } from "@/components/ui/fade-in";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -54,11 +54,10 @@ export default async function AboutPage() {
         </FadeIn>
         <FadeIn delay={0.08}>
           <div className="relative aspect-[4/5] overflow-hidden">
-            <Image
-              src={about?.imageUrl || "/images/store/venue-1.jpg"}
+            <StoreImage
+              src={about?.imageUrl || "/images/store/venue-1-v4.jpg"}
               alt="Angel Nails"
               fill
-              quality={90}
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />

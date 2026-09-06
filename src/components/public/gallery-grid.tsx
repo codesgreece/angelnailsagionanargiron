@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { StoreImage } from "@/components/ui/store-image";
 import { useMemo, useState } from "react";
 import { X } from "lucide-react";
 import type { GalleryImage } from "@prisma/client";
@@ -50,12 +50,11 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
                 onClick={() => setActive(img)}
                 className="group relative block w-full scroll-mt-28 overflow-hidden bg-[var(--brand-soft-white)]"
               >
-                <Image
+                <StoreImage
                   src={img.imageUrl}
                   alt={img.altText || img.title || "Angel Nails gallery"}
                   width={1200}
                   height={1500}
-                  quality={90}
                   loading="lazy"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="h-auto w-full object-cover transition duration-500 group-hover:scale-[1.02]"
@@ -84,12 +83,11 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
             <X />
           </button>
           <div className="relative max-h-[90vh] max-w-5xl" onClick={(e) => e.stopPropagation()}>
-            <Image
+            <StoreImage
               src={active.imageUrl}
               alt={active.altText || active.title || "Angel Nails gallery"}
               width={2000}
               height={1400}
-              quality={92}
               sizes="100vw"
               className="max-h-[85vh] w-auto object-contain"
             />

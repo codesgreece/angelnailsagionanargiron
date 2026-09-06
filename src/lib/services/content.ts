@@ -88,7 +88,7 @@ export const getSiteSettings = cache(async () => {
 
   return {
     ...settings,
-    heroImageUrl: sharpStoreImage(settings.heroImageUrl, "/images/store/venue-1.jpg?v=3"),
+    heroImageUrl: sharpStoreImage(settings.heroImageUrl, "/images/store/venue-1-v4.jpg"),
   };
 });
 

@@ -5,8 +5,9 @@ const nextConfig: NextConfig = {
     // Prefer sharp retina sizes so large desktop heroes don't look soft.
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 2560, 3840],
     imageSizes: [64, 96, 128, 256, 384, 512],
-    formats: ["image/avif", "image/webp"],
-    qualities: [75, 85, 90, 95],
+    // WebP only — AVIF was over-compressing salon photos (~80KB) and looked soft.
+    formats: ["image/webp"],
+    qualities: [75, 85, 90, 95, 100],
     remotePatterns: [
       { protocol: "https", hostname: "cdn1.treatwell.net" },
       { protocol: "https", hostname: "**.treatwell.net" },
