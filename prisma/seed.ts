@@ -605,7 +605,9 @@ async function main() {
 
   await prisma.promoPopupSettings.upsert({
     where: { id: "default" },
-    update: {},
+    update: {
+      delayMs: 6000,
+    },
     create: {
       id: "default",
       enabled: true,
@@ -614,7 +616,7 @@ async function main() {
       title: "Με κάθε πεντικιούρ",
       body: "Δώρο μια θεραπεία ενυδάτωσης — για απαλά, λαμπερά πόδια.",
       ctaLabel: "Κλείσε Ραντεβού",
-      delayMs: 1200,
+      delayMs: 6000,
     },
   });
 

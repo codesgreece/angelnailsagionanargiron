@@ -169,7 +169,7 @@ model PromoPopupSettings {
   ctaLabel  String   @default("Κλείσε Ραντεβού")
   ctaUrl    String?
   imageUrl  String?
-  delayMs   Int      @default(1200)
+  delayMs   Int      @default(6000)
   updatedAt DateTime @updatedAt
 }
 

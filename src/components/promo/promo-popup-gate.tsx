@@ -35,7 +35,7 @@ export function PromoPopupGate({
       return;
     }
 
-    const delay = force ? 200 : Math.max(0, config.delayMs ?? 1200);
+    const delay = force ? 200 : Math.max(0, config.delayMs ?? 6000);
     const timer = window.setTimeout(() => setOpen(true), delay);
     return () => window.clearTimeout(timer);
   }, [config, force]);

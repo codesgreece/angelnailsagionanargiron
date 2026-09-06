@@ -15,7 +15,7 @@ export const getPromoPopupSettings = cache(async (): Promise<PromoPopupConfig> =
           title: "Με κάθε πεντικιούρ",
           body: "Δώρο μια θεραπεία ενυδάτωσης — για απαλά, λαμπερά πόδια.",
           ctaLabel: "Κλείσε Ραντεβού",
-          delayMs: 1200,
+          delayMs: 6000,
         },
       }))
     );
