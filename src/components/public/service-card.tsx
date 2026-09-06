@@ -37,7 +37,7 @@ export function ServiceCard({
                 : formatPrice(service.price?.toString(), service.priceFrom)}
             </p>
           </div>
-          <ButtonLink href={treatwellUrl} external size="sm">
+          <ButtonLink href={treatwellUrl} external size="sm" trackSource="service-card">
             Κλείσε Ραντεβού
           </ButtonLink>
         </div>

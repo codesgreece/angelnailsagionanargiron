@@ -12,6 +12,7 @@ export default async function AdminDashboardPage() {
     galleryImages,
     teamMembers,
     siteViews,
+    treatwellClicks,
     recentAudits,
   ] = await Promise.all([
     prisma.service.count(),
@@ -20,6 +21,7 @@ export default async function AdminDashboardPage() {
     prisma.galleryImage.count({ where: { active: true } }),
     prisma.teamMember.count({ where: { active: true } }),
     prisma.siteView.count(),
+    prisma.treatwellClick.count(),
     prisma.auditLog.findMany({
       orderBy: { createdAt: "desc" },
       take: 8,
@@ -34,6 +36,7 @@ export default async function AdminDashboardPage() {
     { label: "Gallery images", value: galleryImages, href: "/admin/gallery" },
     { label: "Team members", value: teamMembers, href: "/admin/team" },
     { label: "Site views", value: siteViews, href: "/admin" },
+    { label: "Treatwell κλικ", value: treatwellClicks, href: "/admin/analytics/treatwell" },
   ];
 
   return (

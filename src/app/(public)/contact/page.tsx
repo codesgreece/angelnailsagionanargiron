@@ -101,7 +101,7 @@ export default async function ContactPage() {
                     WhatsApp
                   </ButtonLink>
                 )}
-                <ButtonLink href={settings.treatwellUrl} external size="sm">
+                <ButtonLink href={settings.treatwellUrl} external size="sm" trackSource="contact">
                   Treatwell
                 </ButtonLink>
               </div>

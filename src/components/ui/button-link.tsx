@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { trackTreatwellClick } from "@/lib/analytics/track-treatwell-click";
 
 type Props = {
   href: string;
@@ -8,6 +9,8 @@ type Props = {
   className?: string;
   external?: boolean;
   size?: "sm" | "md" | "lg";
+  /** When set, records a Treatwell CTA click before navigation. */
+  trackSource?: string;
 };
 
 export function ButtonLink({
@@ -17,6 +20,7 @@ export function ButtonLink({
   className,
   external,
   size = "md",
+  trackSource,
 }: Props) {
   const base =
     "inline-flex items-center justify-center gap-2 font-medium tracking-wide transition-transform duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ED2F78] active:scale-[0.98]";
@@ -46,16 +50,28 @@ export function ButtonLink({
 
   const cls = cn(base, sizes[size], variants[variant], className);
 
+  function onTrack() {
+    if (trackSource) trackTreatwellClick(trackSource);
+  }
+
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={cls} style={colorStyle}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cls}
+        style={colorStyle}
+        onClick={onTrack}
+        data-booking-cta={trackSource ? true : undefined}
+      >
         {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={cls} style={colorStyle}>
+    <Link href={href} className={cls} style={colorStyle} onClick={onTrack}>
       {children}
     </Link>
   );

@@ -206,7 +206,7 @@ export default async function HomePage() {
               Κλείστε το ραντεβού σας online μέσω Treatwell.
             </p>
             <div className="mt-8 flex justify-center">
-              <ButtonLink href={settings.treatwellUrl} external size="lg">
+              <ButtonLink href={settings.treatwellUrl} external size="lg" trackSource="homepage">
                 Κλείσε Ραντεβού
               </ButtonLink>
             </div>

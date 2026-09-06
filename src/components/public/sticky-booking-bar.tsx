@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { trackTreatwellClick } from "@/lib/analytics/track-treatwell-click";
 
 export function StickyBookingBar({
   treatwellUrl,
@@ -61,6 +62,7 @@ export function StickyBookingBar({
             rel="noopener noreferrer"
             className="inline-flex min-h-11 items-center rounded-md bg-[#ED2F78] px-5 text-sm font-semibold"
             style={{ color: "#FFFFFF" }}
+            onClick={() => trackTreatwellClick("sticky")}
           >
             Κλείσε Ραντεβού
           </a>
@@ -80,6 +82,7 @@ export function StickyBookingBar({
             rel="noopener noreferrer"
             className="shrink-0 rounded-md bg-[#ED2F78] px-4 py-2.5 text-xs font-semibold"
             style={{ color: "#FFFFFF" }}
+            onClick={() => trackTreatwellClick("sticky")}
           >
             Κλείσε Ραντεβού
           </a>
