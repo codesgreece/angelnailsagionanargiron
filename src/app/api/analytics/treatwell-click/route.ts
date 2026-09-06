@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { ensureTreatwellClickTable } from "@/lib/analytics/ensure-treatwell-table";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureTreatwellClickTable();
     const body = await req.json().catch(() => ({}));
     const source =
       typeof body.source === "string" && body.source.trim()
