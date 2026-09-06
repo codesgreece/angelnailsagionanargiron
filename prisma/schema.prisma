@@ -270,3 +270,17 @@ model SiteView {
   @@index([createdAt])
   @@index([path])
 }
+
+/// Click on a Treatwell / booking CTA anywhere on the public site.
+model TreatwellClick {
+  id        String   @id @default(cuid())
+  /// Where the click happened: hero, header, footer, sticky, service-card, etc.
+  source    String
+  /// Page path when the click happened
+  path      String   @default("/")
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([source])
+  @@index([source, createdAt])
+}

@@ -86,7 +86,13 @@ export function HeroSection({
             transition={{ delay: 0.45, duration: 0.55 }}
           >
             <span data-booking-cta className="w-full sm:w-auto">
-              <ButtonLink href={treatwellUrl} external size="lg" className="w-full sm:w-auto">
+              <ButtonLink
+                href={treatwellUrl}
+                external
+                size="lg"
+                className="w-full sm:w-auto"
+                trackSource="hero"
+              >
                 Κλείσε Ραντεβού
               </ButtonLink>
             </span>

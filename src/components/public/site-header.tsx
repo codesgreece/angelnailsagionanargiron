@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { BrandLogo } from "@/components/public/brand-logo";
+import { trackTreatwellClick } from "@/lib/analytics/track-treatwell-click";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -114,7 +115,10 @@ export function SiteHeader({ treatwellUrl }: { treatwellUrl: string }) {
                   rel="noopener noreferrer"
                   className="flex min-h-12 w-full items-center justify-center rounded-md bg-[#ED2F78] px-5 text-base font-semibold"
                   style={{ color: "#FFFFFF" }}
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    trackTreatwellClick("header-mobile");
+                    setOpen(false);
+                  }}
                 >
                   Κλείσε Ραντεβού
                 </a>
@@ -159,6 +163,7 @@ export function SiteHeader({ treatwellUrl }: { treatwellUrl: string }) {
               rel="noopener noreferrer"
               className="hidden min-h-10 items-center justify-center rounded-md bg-[#ED2F78] px-4 text-sm font-medium sm:inline-flex"
               style={{ color: "#FFFFFF" }}
+              onClick={() => trackTreatwellClick("header")}
             >
               Κλείσε Ραντεβού
             </a>

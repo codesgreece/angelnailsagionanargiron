@@ -17,11 +17,13 @@ import {
   LogOut,
   Menu,
   X,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/analytics/treatwell", label: "Treatwell Stats", icon: BarChart3 },
   {
     label: "Content",
     icon: FileText,

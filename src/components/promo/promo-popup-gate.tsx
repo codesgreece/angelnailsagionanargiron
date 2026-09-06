@@ -9,6 +9,7 @@ import {
   promoCampaignId,
   shouldShowPromoPopup,
 } from "@/lib/promo/should-show";
+import { trackTreatwellClick } from "@/lib/analytics/track-treatwell-click";
 
 export function PromoPopupGate({
   config,
@@ -122,7 +123,10 @@ export function PromoPopupGate({
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={close}
+                  onClick={() => {
+                    trackTreatwellClick("promo-popup");
+                    close();
+                  }}
                   className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[#ED2F78] px-5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(237,47,120,0.35)] transition hover:bg-[#FF3F87]"
                 >
                   {config.ctaLabel}

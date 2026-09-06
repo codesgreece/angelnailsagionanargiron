@@ -47,7 +47,7 @@ export default async function AboutPage() {
             {about?.body}
           </div>
           <div className="mt-8">
-            <ButtonLink href={settings.treatwellUrl} external>
+            <ButtonLink href={settings.treatwellUrl} external trackSource="about">
               Κλείσε Ραντεβού
             </ButtonLink>
           </div>
