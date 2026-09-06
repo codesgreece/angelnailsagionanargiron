@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { trackTreatwellClick } from "@/lib/analytics/track-treatwell-click";
@@ -49,10 +51,11 @@ export function ButtonLink({
           : { color: "#FFFFFF" };
 
   const cls = cn(base, sizes[size], variants[variant], className);
-
-  function onTrack() {
-    if (trackSource) trackTreatwellClick(trackSource);
-  }
+  const onTrack = trackSource
+    ? () => {
+        trackTreatwellClick(trackSource);
+      }
+    : undefined;
 
   if (external) {
     return (

@@ -38,7 +38,14 @@ export function formatDuration(min?: number | null, max?: number | null, label?:
 }
 
 export function absoluteUrl(path = "/") {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const envBase = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const vercelProd = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  const vercelUrl = process.env.VERCEL_URL?.trim();
+  const base =
+    envBase ||
+    (vercelProd ? `https://${vercelProd}` : null) ||
+    (vercelUrl ? `https://${vercelUrl}` : null) ||
+    "http://localhost:3000";
   return `${base.replace(/\/$/, "")}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
