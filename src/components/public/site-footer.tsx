@@ -126,7 +126,15 @@ export function SiteFooter({
 
       <div className="border-t border-white/15">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-xs text-white/70 md:flex-row md:items-center md:justify-between md:px-6">
-          <p>© {new Date().getFullYear()} Angel Nails</p>
+          <div className="space-y-1">
+            <p>© {new Date().getFullYear()} Angel Nails</p>
+            <p>
+              Σχεδιασμός &amp; ανάπτυξη από Χαράλαμπο Χριστόπουλο ·{" "}
+              <a href="tel:6936732844" className="hover:text-white">
+                693 673 2844
+              </a>
+            </p>
+          </div>
           <div className="flex flex-wrap gap-4">
             <Link href="/privacy-policy" className="hover:text-white">
               Απόρρητο
